@@ -83,6 +83,22 @@ a, button, input, textarea, select, .clickable, .carousel-nav {
     box-shadow: 0 0 20px var(--neon-purple);
 }
 
+/* Mobile Optimization: Remove Custom Cursor */
+@media (hover: none) and (pointer: coarse), (max-width: 768px) {
+    .custom-cursor, .custom-cursor-dot {
+        display: none !important;
+    }
+    
+    body, html, a, button, input, textarea, select, .clickable, .carousel-nav, .iframe-overlay {
+        cursor: auto !important;
+    }
+    
+    /* Ensure interactive elements have pointer cursor */
+    a, button, .clickable, .carousel-nav, .social-btn, .youtube-btn, .iframe-overlay {
+        cursor: pointer !important;
+    }
+}
+
 /* Screen Reader Only */
 .sr-only {
     position: absolute;
@@ -705,9 +721,10 @@ svg.main-logo-svg image {
 
 .music-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 50px;
     width: 100%;
+    justify-content: center;
 }
 
 .music-card {
@@ -1263,6 +1280,14 @@ svg.main-logo-svg image {
     flex-direction: column;
     align-items: center;
     gap: 15px;
+    width: 100%; /* Ensure full width for centering context */
+}
+
+.footer-content a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
 
 .site-footer p {
@@ -1270,6 +1295,7 @@ svg.main-logo-svg image {
     letter-spacing: 1px;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 5px;
     text-transform: lowercase;
 }
@@ -1513,21 +1539,45 @@ svg.main-logo-svg image {
         display: flex;
         justify-content: center;
         align-items: center;
+        flex-direction: column;
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    .logo-container, .contact-container, #featured-video-container {
+        margin: 0 auto !important;
+        width: 100%;
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
 
     .music-grid {
         grid-template-columns: 1fr;
         padding: 0 20px;
         justify-items: center; /* Center grid items */
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .video-carousel {
         padding: 20px;
         gap: 20px;
+        width: 100%;
+        box-sizing: border-box;
     }
     
     .video-card {
         flex: 0 0 300px;
+        margin: 0 auto; /* Ensure cards are centered if they wrap */
+    }
+
+    /* Fix for any potential overflow */
+    body, html {
+        overflow-x: hidden;
+        width: 100%;
     }
 
     /* Email Link Fix */
@@ -1551,6 +1601,15 @@ svg.main-logo-svg image {
         width: 50px;
         height: 50px;
         font-size: 1.2rem;
+    }
+
+    /* Reduce space between Contact and Footer */
+    #contact-layer {
+        padding-bottom: 10px;
+    }
+    
+    .site-footer {
+        padding-top: 10px;
     }
 }
 
