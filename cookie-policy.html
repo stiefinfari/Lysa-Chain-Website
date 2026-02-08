@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Policy | Lysa Chain</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Syne', sans-serif;
+            padding: 2rem;
+            line-height: 1.6;
+            cursor: auto !important; /* Restore default cursor */
+        }
+        /* Restore cursor for interactive elements */
+        a, button, input {
+            cursor: pointer !important;
+        }
+        .policy-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding-top: 100px;
+        }
+        h1 {
+            color: var(--neon-purple, #b026ff);
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+        h2 {
+            color: #fff;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+        }
+        p {
+            margin-bottom: 1rem;
+            color: #ccc;
+        }
+        ul {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+            color: #ccc;
+        }
+        a {
+            color: var(--neon-purple, #b026ff);
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="policy-container">
+        <a href="/" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
+        
+        <h1>Cookie Policy</h1>
+        
+        <p><strong>Last Updated:</strong> <span id="policy-date"></span></p>
+
+        <p>This Cookie Policy explains what cookies are and how we use them on the website <strong>lysachain.com</strong>.</p>
+
+        <h2>What are cookies?</h2>
+        <p>Cookies are small text files that are saved on your device when you visit a website. They are widely used to make websites work, or work more efficiently, as well as to provide information to the owners of the site.</p>
+
+        <h2>How do we use cookies?</h2>
+        <p>We use cookies for several purposes:</p>
+        <ul>
+            <li><strong>Technical Cookies:</strong> Necessary for the operation of the site (e.g., navigation, access to secure areas). They do not require your consent.</li>
+            <li><strong>Analytics Cookies:</strong> Help us understand how users interact with the site by collecting information anonymously (e.g., Google Analytics).</li>
+            <li><strong>Third-Party Cookies:</strong> Our site includes third-party features (e.g., YouTube videos, Spotify/SoundCloud players) that may set cookies.</li>
+        </ul>
+
+        <h2>Managing Cookies</h2>
+        <p>You can change your cookie preferences at any time through the banner on the site or via your browser settings. However, disabling some cookies may affect your browsing experience.</p>
+        
+        <h2>Specific Third-Party Cookies</h2>
+        <p>The site uses embedded content from:</p>
+        <ul>
+            <li><strong>YouTube:</strong> <a href="https://policies.google.com/privacy" target="_blank">Privacy Policy</a></li>
+            <li><strong>Spotify:</strong> <a href="https://www.spotify.com/legal/privacy-policy/" target="_blank">Privacy Policy</a></li>
+            <li><strong>SoundCloud:</strong> <a href="https://soundcloud.com/pages/privacy" target="_blank">Privacy Policy</a></li>
+        </ul>
+
+    </div>
+
+    <script>
+        // Set the date to the current date or a fixed recent date
+        const dateElement = document.getElementById('policy-date');
+        if (dateElement) {
+            const today = new Date();
+            // Format: Month Day, Year (e.g., February 8, 2026)
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            dateElement.textContent = today.toLocaleDateString('en-US', options);
+        }
+    </script>
+</body>
+</html>
