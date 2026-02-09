@@ -1,6 +1,10 @@
 import './style.css';
 import { Renderer } from 'interactive-shader-format';
 import purpleNoiseShader from './shaders/PurpleNoise.fs?raw';
+import { inject } from '@vercel/analytics';
+
+// Initialize Vercel Analytics
+inject();
 
 document.addEventListener('DOMContentLoaded', () => {
     // console.log("Main.js loaded - Optimization v1");
