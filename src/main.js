@@ -582,28 +582,50 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- COOKIE BANNER LOGIC ---
+    // --- COOKIE BANNER LOGIC (Enhanced) ---
     const cookieBanner = document.getElementById('cookie-banner');
     const acceptBtn = document.getElementById('accept-cookies');
     const rejectBtn = document.getElementById('reject-cookies');
 
     if (cookieBanner && acceptBtn && rejectBtn) {
-        // Check local storage
-        if (!localStorage.getItem('cookieConsent')) {
+        // Safe LocalStorage Access
+        let consent = null;
+        try {
+            consent = localStorage.getItem('cookieConsent');
+        } catch (e) {
+            console.warn('LocalStorage access denied:', e);
+        }
+
+        if (!consent) {
             // Show banner after a short delay
             setTimeout(() => {
                 cookieBanner.classList.add('visible');
             }, 2000);
         }
 
-        acceptBtn.addEventListener('click', () => {
-            localStorage.setItem('cookieConsent', 'accepted');
+        const handleConsent = (type) => {
+            try {
+                localStorage.setItem('cookieConsent', type);
+            } catch (e) {
+                console.warn('LocalStorage write failed:', e);
+            }
             cookieBanner.classList.remove('visible');
-        });
+        };
 
-        rejectBtn.addEventListener('click', () => {
-            localStorage.setItem('cookieConsent', 'rejected');
-            cookieBanner.classList.remove('visible');
+        // Add both click and touchstart for better mobile response
+        ['click', 'touchstart'].forEach(eventType => {
+            acceptBtn.addEventListener(eventType, (e) => {
+                // Prevent ghost clicks if both fire
+                if (e.cancelable) e.preventDefault(); 
+                e.stopPropagation();
+                handleConsent('accepted');
+            }, { passive: false });
+
+            rejectBtn.addEventListener(eventType, (e) => {
+                if (e.cancelable) e.preventDefault();
+                e.stopPropagation();
+                handleConsent('rejected');
+            }, { passive: false });
         });
     }
 
