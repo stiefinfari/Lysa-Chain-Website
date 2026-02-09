@@ -612,20 +612,15 @@ document.addEventListener('DOMContentLoaded', () => {
             cookieBanner.classList.remove('visible');
         };
 
-        // Add both click and touchstart for better mobile response
-        ['click', 'touchstart'].forEach(eventType => {
-            acceptBtn.addEventListener(eventType, (e) => {
-                // Prevent ghost clicks if both fire
-                if (e.cancelable) e.preventDefault(); 
-                e.stopPropagation();
-                handleConsent('accepted');
-            }, { passive: false });
+        // Simple click listeners are sufficient and safer
+        acceptBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            handleConsent('accepted');
+        });
 
-            rejectBtn.addEventListener(eventType, (e) => {
-                if (e.cancelable) e.preventDefault();
-                e.stopPropagation();
-                handleConsent('rejected');
-            }, { passive: false });
+        rejectBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            handleConsent('rejected');
         });
     }
 
