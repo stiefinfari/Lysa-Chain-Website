@@ -1425,10 +1425,21 @@ svg.main-logo-svg image {
 
 @media screen and (max-width: 600px) {
     .cookie-banner {
-        left: 10px;
-        right: 10px;
-        bottom: 10px;
-        max-width: none; /* Full width on mobile */
+        left: 50%;
+        right: auto;
+        bottom: 20px;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 350px;
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+        padding: 20px;
+    }
+
+    .cookie-buttons {
+        width: 100%;
+        justify-content: center;
     }
 }
 
@@ -1447,7 +1458,7 @@ svg.main-logo-svg image {
         top: 0;
         left: 0;
         transform: none !important; /* Disable desktop translation */
-        justify-content: flex-end; /* Align hamburger to right */
+        justify-content: center; /* Center content */
         pointer-events: none; /* Let clicks pass through container to toggle */
     }
 
@@ -1463,42 +1474,46 @@ svg.main-logo-svg image {
         display: flex;
         position: fixed;
         top: 20px;
-        right: 20px;
+        left: 50%; /* Center the toggle */
+        transform: translateX(-50%);
+        right: auto;
         pointer-events: auto; /* Re-enable clicks for toggle */
+        z-index: 1001; /* Ensure above nav-links */
     }
 
     .nav-links {
         position: fixed;
-        top: 60px; /* Immediately below hamburger (20px top + ~30px height + spacing) */
-        right: 20px; /* Aligned with hamburger */
-        left: auto; /* Remove full width */
-        width: auto; /* Fit content */
+        top: 80px; /* Below the centered hamburger */
+        left: 50%; /* Center horizontally */
+        right: auto;
+        width: 90%; /* Responsive width */
+        max-width: 300px; /* Limit width */
         height: auto; /* Fit content */
-        min-width: 200px;
-        background: rgba(10, 5, 15, 0.6); /* Opaque Glass Base - Matched to Desktop */
+        min-width: unset;
+        background: rgba(10, 5, 15, 0.85); /* Darker background for readability */
         flex-direction: column;
         justify-content: flex-start;
-        align-items: flex-end; /* Right align text */
-        gap: 20px; /* Reduced gap */
+        align-items: center; /* Center text/items */
+        gap: 20px;
         padding: 30px;
-        border-radius: 30px; /* Larger radius for pill-like feel */
-        border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border - Matched to Desktop */
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3); /* Softer shadow - Matched to Desktop */
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         opacity: 0;
         visibility: hidden;
         pointer-events: none;
-        transform: translateY(-10px); /* Slide down slightly */
+        transform: translateX(-50%) translateY(-20px); /* Center + slide up initial */
         transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
         z-index: 1000;
-        backdrop-filter: blur(15px) saturate(150%); /* Opaque Glass Effect - Matched to Desktop */
-        -webkit-backdrop-filter: blur(15px) saturate(150%);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
     }
 
     .nav-links.active {
         opacity: 1;
         visibility: visible;
         pointer-events: auto;
-        transform: translateY(0);
+        transform: translateX(-50%) translateY(0); /* Center + reset slide */
     }
 
     .nav-links li a {
@@ -1506,7 +1521,7 @@ svg.main-logo-svg image {
         text-transform: uppercase;
         letter-spacing: 2px;
         text-shadow: 0 0 10px rgba(176, 38, 255, 0.5);
-        text-align: right;
+        text-align: center; /* Center align text */
         display: block;
     }
 
