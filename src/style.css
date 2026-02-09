@@ -1425,10 +1425,11 @@ svg.main-logo-svg image {
 
 @media screen and (max-width: 600px) {
     .cookie-banner {
-        left: 50%;
-        right: auto;
+        left: 0;
+        right: 0;
+        margin: 0 auto; /* Center horizontally */
         bottom: 20px;
-        transform: translateX(-50%);
+        transform: translateY(150%); /* Start hidden (vertical) */
         width: 90%;
         max-width: 350px;
         flex-direction: column;
@@ -1438,6 +1439,11 @@ svg.main-logo-svg image {
         box-sizing: border-box;
         z-index: 2147483647; /* Highest possible z-index */
         pointer-events: auto !important; /* Force events */
+    }
+
+    /* Re-apply visible state for mobile to ensure override */
+    .cookie-banner.visible {
+        transform: translateY(0);
     }
 
     .cookie-actions {
@@ -1655,6 +1661,7 @@ svg.main-logo-svg image {
         grid-template-columns: repeat(3, 1fr);
         gap: 15px;
         justify-content: center;
+        justify-items: center; /* Center items in grid cells */
         width: 100%;
         max-width: 300px;
         margin: 0 auto;
