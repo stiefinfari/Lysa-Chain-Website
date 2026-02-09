@@ -1434,12 +1434,16 @@ svg.main-logo-svg image {
         flex-direction: column;
         text-align: center;
         gap: 15px;
-        padding: 20px;
+        padding: 15px;
+        box-sizing: border-box;
+        z-index: 10000;
+        pointer-events: auto;
     }
 
     .cookie-buttons {
         width: 100%;
         justify-content: center;
+        pointer-events: auto;
     }
 }
 
@@ -1458,7 +1462,7 @@ svg.main-logo-svg image {
         top: 0;
         left: 0;
         transform: none !important; /* Disable desktop translation */
-        justify-content: center; /* Center content */
+        justify-content: flex-end; /* Align hamburger to right */
         pointer-events: none; /* Let clicks pass through container to toggle */
     }
 
@@ -1474,35 +1478,35 @@ svg.main-logo-svg image {
         display: flex;
         position: fixed;
         top: 20px;
-        left: 50%; /* Center the toggle */
-        transform: translateX(-50%);
-        right: auto;
+        left: auto; /* Reset left */
+        transform: none; /* Reset transform */
+        right: 20px; /* Align to right */
         pointer-events: auto; /* Re-enable clicks for toggle */
         z-index: 1001; /* Ensure above nav-links */
     }
 
     .nav-links {
         position: fixed;
-        top: 80px; /* Below the centered hamburger */
-        left: 50%; /* Center horizontally */
-        right: auto;
-        width: 90%; /* Responsive width */
-        max-width: 300px; /* Limit width */
+        top: 80px; /* Below the hamburger */
+        left: auto; /* Reset left */
+        right: 20px; /* Align to right */
+        width: auto; /* Fit content */
+        max-width: 250px; /* Limit width */
         height: auto; /* Fit content */
-        min-width: unset;
-        background: rgba(10, 5, 15, 0.85); /* Darker background for readability */
+        min-width: 200px;
+        background: rgba(10, 5, 15, 0.95); /* Opaque background */
         flex-direction: column;
         justify-content: flex-start;
-        align-items: center; /* Center text/items */
+        align-items: center; /* Center text items */
         gap: 20px;
-        padding: 30px;
+        padding: 25px;
         border-radius: 20px;
         border: 1px solid rgba(255, 255, 255, 0.1);
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         opacity: 0;
         visibility: hidden;
         pointer-events: none;
-        transform: translateX(-50%) translateY(-20px); /* Center + slide up initial */
+        transform: translateY(-20px); /* Slide down effect */
         transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
         z-index: 1000;
         backdrop-filter: blur(20px) saturate(180%);
@@ -1513,7 +1517,7 @@ svg.main-logo-svg image {
         opacity: 1;
         visibility: visible;
         pointer-events: auto;
-        transform: translateX(-50%) translateY(0); /* Center + reset slide */
+        transform: translateY(0); /* Reset slide */
     }
 
     .nav-links li a {
@@ -1546,6 +1550,17 @@ svg.main-logo-svg image {
         font-size: 1rem;
         padding: 0 20px;
         text-align: center; /* Ensure text is centered */
+    }
+
+    /* Video Card Text Fix */
+    .video-card h3 {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+        font-size: 0.9rem;
+        line-height: 1.3;
+        padding: 10px;
+        word-wrap: break-word;
     }
 
     /* Layouts */
@@ -1587,6 +1602,23 @@ svg.main-logo-svg image {
     .video-card {
         flex: 0 0 300px;
         margin: 0 auto; /* Ensure cards are centered if they wrap */
+    }
+
+    /* Footer Centering */
+    .site-footer {
+        padding: 40px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .footer-content, .footer-legal {
+        width: 100%;
+        align-items: center;
+        text-align: center;
     }
 
     /* Fix for any potential overflow */
