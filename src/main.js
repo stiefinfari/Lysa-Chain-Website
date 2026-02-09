@@ -614,11 +614,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Simple click listeners are sufficient and safer
         acceptBtn.addEventListener('click', (e) => {
+            console.log('Cookie Accept Clicked');
             e.preventDefault();
             handleConsent('accepted');
         });
 
         rejectBtn.addEventListener('click', (e) => {
+            console.log('Cookie Reject Clicked');
             e.preventDefault();
             handleConsent('rejected');
         });

@@ -1451,6 +1451,7 @@ svg.main-logo-svg image {
         justify-content: center;
         pointer-events: auto;
         gap: 10px;
+        flex-direction: column; /* Stack buttons vertically on mobile */
     }
     
     .cookie-btn {
