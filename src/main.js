@@ -443,9 +443,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+    // Helper to escape HTML to prevent XSS
+    function escapeHTML(str) {
+        return str.replace(/[&<>'"]/g, 
+            tag => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag]));
+    }
+
     function updateFeaturedVideo(video) {
         if (!featuredContainer) return;
         const videoId = video.guid.split(':')[2];
+        const safeTitle = escapeHTML(video.title);
         
         // Create a static preview image (high quality) with a play button overlay
         // This prevents the double-click issue by not loading the iframe directly until clicked
@@ -456,7 +469,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="play-button" style="width:80px; height:80px; background:rgba(0,0,0,0.7); border-radius:50%; border:2px solid var(--neon-purple); display:flex; justify-content:center; align-items:center; box-shadow:0 0 20px var(--neon-purple);">
                     <i class="fa-solid fa-play" style="color:white; font-size:30px; margin-left:5px;"></i>
                 </div>
-                <div style="position:absolute; bottom:0; left:0; width:100%; padding:20px; background:linear-gradient(to top, black, transparent); color:white; font-family:'Syne', sans-serif; font-size:1.5rem; font-weight:700;">${video.title}</div>
+                <div style="position:absolute; bottom:0; left:0; width:100%; padding:20px; background:linear-gradient(to top, black, transparent); color:white; font-family:'Syne', sans-serif; font-size:1.5rem; font-weight:700;">${safeTitle}</div>
             </div>
         `;
 
@@ -469,6 +482,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         videos.forEach(video => {
             const videoId = video.guid.split(':')[2];
+            const safeTitle = escapeHTML(video.title);
             const card = document.createElement('div');
             card.className = 'video-card fade-on-scroll'; 
             revealObserver.observe(card); 
@@ -482,7 +496,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <i class="fa-solid fa-play" style="color:white; font-size:40px; filter:drop-shadow(0 0 10px black);"></i>
                     </div>
                 </div>
-                <h3>${video.title}</h3>
+                <h3>${safeTitle}</h3>
             `;
             
             // Click to open modal
