@@ -46,9 +46,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 function renderISF() {
                     if (isISFVisible) { 
                         isfRenderer.draw(isfCanvas);
+                        requestAnimationFrame(renderISF);
+                    } else {
+                        // Pause loop when hidden, will be restarted by scroll handler
                     }
-                    requestAnimationFrame(renderISF);
                 }
+                
+                // Expose restart function
+                window.restartISF = function() {
+                    requestAnimationFrame(renderISF);
+                };
+                
                 requestAnimationFrame(renderISF);
             }
         } catch (e) {
@@ -78,8 +86,9 @@ document.addEventListener('DOMContentLoaded', () => {
         gridLayer.innerHTML = '';
         gridItems = [];
         
-        const colCount = Math.ceil(window.innerWidth / 80);
-        const rowCount = Math.ceil(window.innerHeight / 80);
+        const cellSize = window.innerWidth < 768 ? 80 : 120; // Optimization: Larger cells on desktop to reduce DOM nodes
+        const colCount = Math.ceil(window.innerWidth / cellSize);
+        const rowCount = Math.ceil(window.innerHeight / cellSize);
         const cellCount = Math.ceil(colCount * rowCount * 1.2); 
         
         for (let i = 0; i < cellCount; i++) {
@@ -266,7 +275,12 @@ document.addEventListener('DOMContentLoaded', () => {
             isfContainer.style.opacity = opacity;
             
             // Update visibility flag for renderer
+            const wasVisible = isISFVisible;
             isISFVisible = opacity > 0.01;
+            
+            if (!wasVisible && isISFVisible && window.restartISF) {
+                window.restartISF();
+            }
         }
     }
     
@@ -511,6 +525,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function animateCursor() {
+        // Optimization: Stop loop on touch devices or small screens
+        if (window.matchMedia('(hover: none) and (pointer: coarse)').matches || window.innerWidth < 768) {
+            // Ensure cursor elements are hidden
+            if (cursor.style.display !== 'none') {
+                cursor.style.display = 'none';
+                cursorDot.style.display = 'none';
+            }
+            // Check periodically if we switched to desktop (e.g. rotation or dock)
+            setTimeout(() => requestAnimationFrame(animateCursor), 1000); 
+            return;
+        } else {
+             if (cursor.style.display === 'none') {
+                cursor.style.display = 'block';
+                cursorDot.style.display = 'block';
+             }
+        }
+
         // Smooth follow for outer ring
         // Increased speed from 0.15 to 0.3 for snappier response
         const speed = 0.3;

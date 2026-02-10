@@ -263,6 +263,7 @@ svg.main-logo-svg image {
     opacity: 0; /* Controlled by JS scroll */
     pointer-events: none;
     background: #000; /* Fallback */
+    will-change: opacity;
 }
 
 #isf-canvas {
