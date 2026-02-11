@@ -365,7 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalContent.innerHTML = `
             <iframe 
                 src="${embedUrl}" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" 
                 allowfullscreen>
             </iframe>
         `;
@@ -434,7 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <iframe 
                         src="https://www.youtube.com/embed/videoseries?list=PLB5A7F85854619376" 
                         title="Lysa Chain Latest" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" 
                         allowfullscreen>
                     </iframe>`;
             }
