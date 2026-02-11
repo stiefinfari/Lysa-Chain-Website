@@ -1,10 +1,14 @@
 import './style.css';
 import { inject } from '@vercel/analytics';
+import { injectSpeedInsights } from '@vercel/speed-insights';
 import { Renderer } from 'interactive-shader-format';
 import purpleNoiseShader from './shaders/PurpleNoise.fs?raw';
 
 // Initialize Vercel Analytics
 inject();
+
+// Initialize Vercel Speed Insights
+injectSpeedInsights();
 
 document.addEventListener('DOMContentLoaded', () => {
     // console.log("Main.js loaded - Optimization v1");
