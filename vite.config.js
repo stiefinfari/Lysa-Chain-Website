@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['assets/favicon.png', 'vite.svg'],
+      includeAssets: ['assets/favicon.png'],
       manifest: {
         name: 'Lysa Chain',
         short_name: 'LysaChain',
