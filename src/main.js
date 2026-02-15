@@ -12,7 +12,7 @@ injectSpeedInsights();
 
 document.addEventListener('DOMContentLoaded', () => {
     // console.log("Main.js loaded - Optimization v1");
-    document.body.classList.add('no-scroll');
+    // document.body.classList.add('no-scroll'); // Disabled for better UX
     
     const preloader = document.getElementById('preloader');
     const mainContent = document.getElementById('main-content');
@@ -44,7 +44,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 isfRenderer.loadSource(purpleNoiseShader);
                 
                 // Handle Resize
+                let lastISFWidth = 0;
                 const resizeISF = () => {
+                    // Ignore vertical resizes to prevent background reset on mobile scroll
+                    if (window.innerWidth === lastISFWidth) return;
+                    lastISFWidth = window.innerWidth;
+
                     isfCanvas.width = window.innerWidth;
                     isfCanvas.height = window.innerHeight;
                 };
@@ -81,7 +86,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle Resize
     let resizeTimeout;
+    let lastWidth = window.innerWidth;
+    
     window.addEventListener('resize', () => {
+        // Ignore vertical resizes (e.g. mobile address bar)
+        if (window.innerWidth === lastWidth) return;
+        lastWidth = window.innerWidth;
+
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
             if (gridLayer) initGrid();
@@ -216,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 scrollIndicator.classList.add('visible');
                 scrollIndicator.style.opacity = ''; 
             }
-            document.body.classList.remove('no-scroll');
+            // document.body.classList.remove('no-scroll');
         }, 3000);
     }
 
@@ -565,8 +576,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Smooth follow for outer ring
-        // Increased speed from 0.15 to 0.3 for snappier response
-        const speed = 0.3;
+        // Increased speed to 0.8 for instant response
+        const speed = 0.8;
         cursorX += (mouseX - cursorX) * speed;
         cursorY += (mouseY - cursorY) * speed;
         

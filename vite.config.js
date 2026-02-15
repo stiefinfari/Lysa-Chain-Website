@@ -11,6 +11,9 @@ export default defineConfig({
         short_name: 'LysaChain',
         description: 'Lysa Chain - Electronic & Techno Artist',
         theme_color: '#b026ff',
+        background_color: '#000000',
+        display: 'standalone',
+        orientation: 'portrait',
         icons: [
           {
             src: 'pwa-192x192.png',
