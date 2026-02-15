@@ -2,7 +2,7 @@ import './style.css';
 import { inject } from '@vercel/analytics';
 import { injectSpeedInsights } from '@vercel/speed-insights';
 import { Renderer } from 'interactive-shader-format';
-import purpleNoiseShader from './shaders/PurpleNoise.fs?raw';
+import purpleNoiseShader from './shaders/PurpleNoise.frag?raw';
 
 // Initialize Vercel Analytics
 inject();
