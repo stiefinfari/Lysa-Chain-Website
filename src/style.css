@@ -15,13 +15,11 @@ body, html {
   overflow-x: hidden;
   overflow-y: auto;
   scroll-behavior: smooth;
-  cursor: none; /* Hide default cursor for immersive custom cursor */
+  cursor: auto; /* Restore default cursor */
 }
 
 /* Force hide cursor on all interactive elements to prevent "hand" icon */
-a, button, input, textarea, select, .clickable, .carousel-nav {
-    cursor: none !important;
-}
+/* REMOVED: Custom cursor override */
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
@@ -42,79 +40,11 @@ a, button, input, textarea, select, .clickable, .carousel-nav {
     background: #d46aff; 
 }
 
-/* Custom Cursor - SVG Container */
-.custom-cursor {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 40px;
-    height: 40px;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    mix-blend-mode: difference;
-    will-change: transform;
-}
-
-/* Stili SVG */
-.custom-cursor svg {
-    width: 100%;
-    height: 100%;
-    transform: rotate(-90deg); /* Ruota per iniziare il progresso dall'alto */
-    overflow: visible;
-}
-
-/* Cerchio statico di sfondo */
-.cursor-ring {
-    fill: none;
-    stroke: rgba(176, 38, 255, 0.3);
-    stroke-width: 1;
-}
-
-/* Cerchio di progresso dinamico */
-.cursor-progress {
-    fill: none;
-    stroke: var(--neon-purple);
-    stroke-width: 2;
-    stroke-linecap: round;
-    transition: stroke-dashoffset 0.1s linear; 
-}
-
-/* Punto centrale (rimane invariato) */
-.custom-cursor-dot {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 6px;
-    height: 6px;
-    background-color: white;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 10000;
-    transform: translate(-50%, -50%);
-    will-change: transform;
-    box-shadow: 0 0 5px white;
-}
-
-/* Effetto Hover */
-.custom-cursor.hovered {
-    transform: translate(-50%, -50%) scale(1.5);
-}
-
-.custom-cursor.hovered .cursor-ring {
-    stroke: #fff;
-    stroke-width: 2;
-}
+/* Custom Cursor - REMOVED */
 
 /* Mobile Optimization: Remove Custom Cursor */
 @media (hover: none) and (pointer: coarse), (max-width: 768px) {
-    .custom-cursor, .custom-cursor-dot {
-        display: none !important;
-    }
-    
-    body, html, a, button, input, textarea, select, .clickable, .carousel-nav, .iframe-overlay {
-        cursor: auto !important;
-    }
+    /* No custom cursor rules needed */
     
     /* Ensure interactive elements have pointer cursor */
     a, button, .clickable, .carousel-nav, .social-btn, .youtube-btn, .iframe-overlay {
@@ -932,7 +862,7 @@ svg.main-logo-svg image {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    cursor: none; /* Was pointer */
+    cursor: pointer; /* Was none */
     z-index: 20;
     font-size: 1.2rem;
     transition: all 0.2s ease-in-out;
@@ -990,7 +920,7 @@ svg.main-logo-svg image {
     height: 100%;
     z-index: 15; /* Above content/iframe */
     background: transparent;
-    cursor: none !important; /* Force custom cursor */
+    cursor: pointer; /* Force pointer cursor */
 }
 
 .video-card:hover {

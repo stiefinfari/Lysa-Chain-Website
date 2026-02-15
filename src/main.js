@@ -563,104 +563,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- INTERACTIVE: Custom Cursor con Scroll Progress ---
-    const cursor = document.createElement('div');
-    cursor.classList.add('custom-cursor');
-    
-    // Iniezione SVG: Un cerchio di sfondo e uno di progresso
-    cursor.innerHTML = `
-        <svg class="cursor-svg" width="40" height="40" viewBox="0 0 40 40">
-            <circle class="cursor-ring" cx="20" cy="20" r="18" />
-            <circle class="cursor-progress" cx="20" cy="20" r="18" />
-        </svg>
-    `;
-    document.body.appendChild(cursor);
-
-    const cursorDot = document.createElement('div');
-    cursorDot.classList.add('custom-cursor-dot');
-    document.body.appendChild(cursorDot);
-
-    // Setup SVG Progress
-    const progressCircle = cursor.querySelector('.cursor-progress');
-    const radius = 18; // Corrisponde al raggio r="18" nel SVG
-    const circumference = 2 * Math.PI * radius;
-    
-    // Imposta dasharray uguale alla circonferenza per creare l'effetto "riempimento"
-    progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
-    progressCircle.style.strokeDashoffset = circumference; // Inizia vuoto
-
-    let mouseX = 0;
-    let mouseY = 0;
-    let cursorX = 0;
-    let cursorY = 0;
-
-    document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-    });
-
-    // Logica Calcolo Scroll
-    function updateScrollProgress() {
-        const scrollTop = window.scrollY;
-        const docHeight = document.body.scrollHeight - window.innerHeight;
-        const scrollPercent = scrollTop / (docHeight || 1); // Evita divisione per zero
-        
-        // Calcola l'offset: 
-        // 100% offset = cerchio vuoto
-        // 0% offset = cerchio pieno
-        const offset = circumference - (Math.min(1, Math.max(0, scrollPercent)) * circumference);
-        progressCircle.style.strokeDashoffset = offset;
-    }
-
-    // Aggiorna al caricamento e allo scroll
-    window.addEventListener('scroll', updateScrollProgress);
-    updateScrollProgress();
-
-    function animateCursor() {
-        // Ottimizzazione: Disabilita su mobile/touch
-        if (window.matchMedia('(hover: none) and (pointer: coarse)').matches || window.innerWidth < 768) {
-            if (cursor.style.display !== 'none') {
-                cursor.style.display = 'none';
-                cursorDot.style.display = 'none';
-            }
-            setTimeout(() => requestAnimationFrame(animateCursor), 1000); 
-            return;
-        } else {
-             if (cursor.style.display === 'none') {
-                cursor.style.display = 'block';
-                cursorDot.style.display = 'block';
-             }
-        }
-
-        // Movimento fluido (Lerp) per l'anello esterno
-        const speed = 0.15; // Più lento per un effetto magnetico elegante
-        cursorX += (mouseX - cursorX) * speed;
-        cursorY += (mouseY - cursorY) * speed;
-        
-        cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
-        
-        // Il punto centrale segue più velocemente
-        cursorDot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
-        
-        requestAnimationFrame(animateCursor);
-    }
-    animateCursor();
-
-    // Hover Effects
-    const interactiveElements = document.querySelectorAll('a, button, .clickable, .grid-item, .social-btn, .carousel-nav, iframe');
-    
-    // Use event delegation for better performance and dynamic elements
-    document.body.addEventListener('mouseover', (e) => {
-        if (e.target.matches('a, button, .clickable, .social-btn, .carousel-nav, input, textarea') || e.target.closest('a, button, .clickable')) {
-            cursor.classList.add('hovered');
-        }
-    });
-
-    document.body.addEventListener('mouseout', (e) => {
-        if (e.target.matches('a, button, .clickable, .social-btn, .carousel-nav, input, textarea') || e.target.closest('a, button, .clickable')) {
-            cursor.classList.remove('hovered');
-        }
-    });
+    // --- INTERACTIVE: Custom Cursor REMOVED ---
+    /* 
+    The custom cursor has been removed as per user request to use the default system cursor.
+    Previous implementation code deleted to clean up the file.
+    */
 
     // --- INTERACTIVE: Video Background Parallax (Removed for performance/simplicity) ---
     // const videoBg = document.querySelector('.section-video-bg');
