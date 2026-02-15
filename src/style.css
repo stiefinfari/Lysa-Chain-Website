@@ -42,24 +42,45 @@ a, button, input, textarea, select, .clickable, .carousel-nav {
     background: #d46aff; 
 }
 
-/* Custom Cursor */
+/* Custom Cursor - SVG Container */
 .custom-cursor {
     position: fixed;
     top: 0;
     left: 0;
     width: 40px;
     height: 40px;
-    border: 1px solid var(--neon-purple);
-    border-radius: 50%;
     pointer-events: none;
     z-index: 9999;
     transform: translate(-50%, -50%);
-    transition: width 0.3s, height 0.3s, background-color 0.3s, border-color 0.3s;
     mix-blend-mode: difference;
-    box-shadow: 0 0 10px var(--neon-purple);
     will-change: transform;
 }
 
+/* Stili SVG */
+.custom-cursor svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg); /* Ruota per iniziare il progresso dall'alto */
+    overflow: visible;
+}
+
+/* Cerchio statico di sfondo */
+.cursor-ring {
+    fill: none;
+    stroke: rgba(176, 38, 255, 0.3);
+    stroke-width: 1;
+}
+
+/* Cerchio di progresso dinamico */
+.cursor-progress {
+    fill: none;
+    stroke: var(--neon-purple);
+    stroke-width: 2;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.1s linear; 
+}
+
+/* Punto centrale (rimane invariato) */
 .custom-cursor-dot {
     position: fixed;
     top: 0;
@@ -75,12 +96,14 @@ a, button, input, textarea, select, .clickable, .carousel-nav {
     box-shadow: 0 0 5px white;
 }
 
+/* Effetto Hover */
 .custom-cursor.hovered {
-    width: 60px;
-    height: 60px;
-    background-color: rgba(176, 38, 255, 0.1);
-    border-color: #fff;
-    box-shadow: 0 0 20px var(--neon-purple);
+    transform: translate(-50%, -50%) scale(1.5);
+}
+
+.custom-cursor.hovered .cursor-ring {
+    stroke: #fff;
+    stroke-width: 2;
 }
 
 /* Mobile Optimization: Remove Custom Cursor */
@@ -1045,6 +1068,71 @@ svg.main-logo-svg image {
     gap: 20px;
 }
 
+/* --- Featured Video Preview Styles --- */
+.video-preview {
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+.video-preview:hover {
+    transform: scale(1.02);
+}
+
+.play-button {
+    width: 80px;
+    height: 80px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    border: 2px solid var(--neon-purple);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 20px var(--neon-purple);
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+.play-button i {
+    color: white;
+    font-size: 30px;
+    margin-left: 5px; /* Correzione ottica per l'icona play */
+    filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
+}
+
+.video-preview:hover .play-button {
+    transform: scale(1.1);
+    background: rgba(176, 38, 255, 0.4);
+    box-shadow: 0 0 40px var(--neon-purple);
+    border-color: #fff;
+}
+
+.video-preview-title {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 30px;
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 50%, transparent 100%);
+    color: white;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    box-sizing: border-box;
+    text-transform: uppercase;
+    z-index: 2;
+    pointer-events: none; /* Lascia passare i click al contenitore */
+}
+
 /* --- VIDEO MODAL (Lightbox) --- */
 .video-modal {
     display: none;
@@ -1715,5 +1803,24 @@ svg.main-logo-svg image {
 
     .email-link {
         font-size: clamp(0.9rem, 4.5vw, 1.2rem); /* Even smaller for phones if needed */
+    }
+
+    /* Video Preview Mobile Fixes */
+    .play-button {
+        width: 60px;
+        height: 60px;
+        border-width: 1.5px;
+    }
+
+    .play-button i {
+        font-size: 22px;
+        margin-left: 3px;
+    }
+
+    .video-preview-title {
+        font-size: 1.1rem;
+        padding: 15px 20px;
+        text-align: center; /* Titolo centrato su mobile per leggibilità */
+        background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
     }
 }

@@ -24,6 +24,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainMenu = document.getElementById('main-menu');
     const scrollIndicator = document.querySelector('.scroll-indicator');
     
+    // --- VIDEO HERO MOBILE AUTOPLAY FIX ---
+    // Ensure video plays on mobile by forcing play() on touchstart if needed
+    // and checking playsinline/muted attributes which are already in HTML
+    if (heroVideo) {
+        // Force muted for autoplay policy
+        heroVideo.muted = true;
+        
+        // Attempt play immediately
+        const playPromise = heroVideo.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.warn("Autoplay prevented:", error);
+                // Add one-time touch listener to start video
+                const startVideo = () => {
+                    heroVideo.play();
+                    document.removeEventListener('touchstart', startVideo);
+                    document.removeEventListener('click', startVideo);
+                };
+                document.addEventListener('touchstart', startVideo);
+                document.addEventListener('click', startVideo);
+            });
+        }
+    }
+
     // --- Dynamic Copyright Year ---
     const copyrightYear = document.getElementById('copyright-year');
     if (copyrightYear) {
@@ -483,12 +507,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // This prevents the double-click issue by not loading the iframe directly until clicked
         const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
         
+        // Updated HTML structure using CSS classes
         featuredContainer.innerHTML = `
-            <div class="video-preview" style="width:100%; height:100%; background:url('${thumbnailUrl}') center/cover no-repeat; cursor:pointer; position:relative; display:flex; justify-content:center; align-items:center;">
-                <div class="play-button" style="width:80px; height:80px; background:rgba(0,0,0,0.7); border-radius:50%; border:2px solid var(--neon-purple); display:flex; justify-content:center; align-items:center; box-shadow:0 0 20px var(--neon-purple);">
-                    <i class="fa-solid fa-play" style="color:white; font-size:30px; margin-left:5px;"></i>
+            <div class="video-preview" style="background-image: url('${thumbnailUrl}');">
+                <div class="play-button">
+                    <i class="fa-solid fa-play"></i>
                 </div>
-                <div style="position:absolute; bottom:0; left:0; width:100%; padding:20px; background:linear-gradient(to top, black, transparent); color:white; font-family:'Syne', sans-serif; font-size:1.5rem; font-weight:700;">${safeTitle}</div>
+                <div class="video-preview-title">${safeTitle}</div>
             </div>
         `;
 
@@ -538,14 +563,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- INTERACTIVE: Custom Cursor ---
+    // --- INTERACTIVE: Custom Cursor con Scroll Progress ---
     const cursor = document.createElement('div');
     cursor.classList.add('custom-cursor');
+    
+    // Iniezione SVG: Un cerchio di sfondo e uno di progresso
+    cursor.innerHTML = `
+        <svg class="cursor-svg" width="40" height="40" viewBox="0 0 40 40">
+            <circle class="cursor-ring" cx="20" cy="20" r="18" />
+            <circle class="cursor-progress" cx="20" cy="20" r="18" />
+        </svg>
+    `;
     document.body.appendChild(cursor);
 
     const cursorDot = document.createElement('div');
     cursorDot.classList.add('custom-cursor-dot');
     document.body.appendChild(cursorDot);
+
+    // Setup SVG Progress
+    const progressCircle = cursor.querySelector('.cursor-progress');
+    const radius = 18; // Corrisponde al raggio r="18" nel SVG
+    const circumference = 2 * Math.PI * radius;
+    
+    // Imposta dasharray uguale alla circonferenza per creare l'effetto "riempimento"
+    progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+    progressCircle.style.strokeDashoffset = circumference; // Inizia vuoto
 
     let mouseX = 0;
     let mouseY = 0;
@@ -557,15 +599,30 @@ document.addEventListener('DOMContentLoaded', () => {
         mouseY = e.clientY;
     });
 
+    // Logica Calcolo Scroll
+    function updateScrollProgress() {
+        const scrollTop = window.scrollY;
+        const docHeight = document.body.scrollHeight - window.innerHeight;
+        const scrollPercent = scrollTop / (docHeight || 1); // Evita divisione per zero
+        
+        // Calcola l'offset: 
+        // 100% offset = cerchio vuoto
+        // 0% offset = cerchio pieno
+        const offset = circumference - (Math.min(1, Math.max(0, scrollPercent)) * circumference);
+        progressCircle.style.strokeDashoffset = offset;
+    }
+
+    // Aggiorna al caricamento e allo scroll
+    window.addEventListener('scroll', updateScrollProgress);
+    updateScrollProgress();
+
     function animateCursor() {
-        // Optimization: Stop loop on touch devices or small screens
+        // Ottimizzazione: Disabilita su mobile/touch
         if (window.matchMedia('(hover: none) and (pointer: coarse)').matches || window.innerWidth < 768) {
-            // Ensure cursor elements are hidden
             if (cursor.style.display !== 'none') {
                 cursor.style.display = 'none';
                 cursorDot.style.display = 'none';
             }
-            // Check periodically if we switched to desktop (e.g. rotation or dock)
             setTimeout(() => requestAnimationFrame(animateCursor), 1000); 
             return;
         } else {
@@ -575,15 +632,14 @@ document.addEventListener('DOMContentLoaded', () => {
              }
         }
 
-        // Smooth follow for outer ring
-        // Increased speed to 0.8 for instant response
-        const speed = 0.8;
+        // Movimento fluido (Lerp) per l'anello esterno
+        const speed = 0.15; // Più lento per un effetto magnetico elegante
         cursorX += (mouseX - cursorX) * speed;
         cursorY += (mouseY - cursorY) * speed;
         
         cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
         
-        // Dot follows instantly using transform for performance (moved to RAF loop)
+        // Il punto centrale segue più velocemente
         cursorDot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
         
         requestAnimationFrame(animateCursor);
