@@ -7,9 +7,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['assets/favicon.png'],
       manifest: {
-        name: 'Lysa Chain',
+        name: 'Lysa Chain | DJ & Producer',
         short_name: 'LysaChain',
-        description: 'Lysa Chain - Electronic & Techno Artist',
+        description: 'Lysa Chain | DJ & Producer',
         theme_color: '#b026ff',
         background_color: '#000000',
         display: 'standalone',
