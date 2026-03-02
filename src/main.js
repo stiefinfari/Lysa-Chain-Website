@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2. Dismiss Preloader & Start Reveal Timer
     if (preloader) {
-        const totalDuration = 3500; 
+        const totalDuration = 2000; // Reduced from 3500ms for better LCP
         setTimeout(() => {
             preloader.style.opacity = '0';
             preloader.style.pointerEvents = 'none'; 
@@ -189,12 +189,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         heroVideo.play().catch(e => console.warn("Autoplay:", e));
                     }
 
-                    // START 5s TIMER for Sequence
+                    // Start Sequence immediately (reduced from 5000ms)
                     setTimeout(() => {
                         startHeroSequence();
-                    }, 5000);
+                    }, 100);
                 }
-            }, 800); 
+            }, 500); // Reduced fade out buffer
         }, totalDuration);
     } else {
         if (mainContent) {
@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Fallback for no preloader
             setTimeout(() => {
                 startHeroSequence();
-            }, 5000);
+            }, 100);
         }
     }
 
