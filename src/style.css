@@ -147,13 +147,13 @@ svg.main-logo-svg image {
 }
 
 @keyframes appearBlur {
-  0% { opacity: 0; filter: blur(20px); }
+  0% { opacity: 0; filter: blur(10px); } /* Optimized: Reduced blur radius */
   100% { opacity: 1; filter: blur(0); }
 }
 
 @keyframes neonPass {
   0% { filter: drop-shadow(0 0 0 transparent); }
-  50% { filter: drop-shadow(0 0 20px #fff) drop-shadow(0 0 60px #b026ff) drop-shadow(0 0 100px #8B00FF) brightness(1.2); }
+  50% { filter: drop-shadow(0 0 10px #b026ff) drop-shadow(0 0 20px #8B00FF) brightness(1.2); } /* Optimized: Reduced shadow radius */
   100% { filter: drop-shadow(0 0 0 transparent); }
 }
 
@@ -205,89 +205,30 @@ svg.main-logo-svg image {
     height: 100dvh; /* Mobile browser address bar fix */
     z-index: 0;
     pointer-events: none; /* Let scroll pass through */
-}
-
-/* ISF Background Container */
-#isf-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1; /* Above Hero (0), Below Content (10) */
-    opacity: 0; /* Controlled by JS scroll */
-    pointer-events: none;
-    background: #000; /* Fallback */
+    transition: opacity 0.1s linear, visibility 0.1s linear; /* Smooth fade on scroll */
     will-change: opacity;
 }
 
-#isf-canvas {
-    width: 100%;
-    height: 100%;
-    display: block;
-}
+/* ISF Background Container REMOVED */
 
-/* Scroll Spacer - Controls duration of initial logo visibility */
-#scroll-spacer {
-    height: 150vh; /* Increased to allow logo to be fully visible before About arrives */
-    width: 100%;
-    pointer-events: none;
-}
-
-/* Content Flow - Stacks sections naturally */
-#content-flow {
-    position: relative;
-    z-index: 10;
-    width: 100%;
-    background: transparent;
-}
-
-/* Standard Section Style */
-.standard-section {
-    position: relative;
-    width: 100%;
-    min-height: 100vh; /* Full viewport height min */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 100px 0;
-    box-sizing: border-box;
-    
-    /* Default background - Semi-transparent to show ISF */
-    background: rgba(0, 0, 0, 0.6); 
-    backdrop-filter: blur(5px);
-    
-    /* Ensure visibility */
-    opacity: 1 !important;
-    pointer-events: auto !important;
-}
-
-/* Specific About Layer Style for Fade Transition */
-#about-layer {
-    /* Gradient from transparent to semi-transparent black */
-    background: linear-gradient(to bottom, 
-        rgba(0, 0, 0, 0) 0%, 
-        rgba(0, 0, 0, 0.4) 20%, 
-        rgba(0, 0, 0, 0.6) 40%, 
-        rgba(0, 0, 0, 0.6) 100%
-    );
-    padding-top: 200px; /* Extra padding to account for the transparent top */
-    backdrop-filter: none; /* Disable global blur here to avoid hard edge */
-}
-
-
-/* Background Gradient Animation */
+/* Background Gradient Animation - Now Main Background */
 #gradient-bg {
-    position: absolute;
+    position: fixed; /* Changed from absolute to fixed to cover all scroll */
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
-    z-index: 0;
+    height: 100vh; /* Viewport height */
+    z-index: -5; /* Deepest background */
     background: radial-gradient(circle at 50% 50%, #1a0525, #000000);
     overflow: hidden;
     opacity: 0;
     transition: opacity 1s ease;
+    will-change: opacity;
+}
+
+/* Add a static base color for body to handle overscroll/loading */
+body {
+    background-color: #000;
 }
 
 #gradient-bg::before, #gradient-bg::after {
@@ -296,14 +237,15 @@ svg.main-logo-svg image {
     width: 150vw;
     height: 150vh;
     border-radius: 40%;
-    background: linear-gradient(45deg, #2a0048, #5a005a);
-    filter: blur(100px);
-    opacity: 0.3;
+    /* Optimized: Use radial gradient instead of heavy blur filter */
+    background: radial-gradient(circle, rgba(90,0,90,0.4) 0%, rgba(0,0,0,0) 70%);
+    opacity: 0.6; /* Increased slightly to compensate for loss of solid color */
     animation: moveBlob 15s infinite alternate linear;
+    will-change: transform;
 }
 
 #gradient-bg::after {
-    background: linear-gradient(45deg, #15001c, #2a0048);
+    background: radial-gradient(circle, rgba(42,0,72,0.4) 0%, rgba(0,0,0,0) 70%);
     animation-duration: 20s;
     animation-direction: alternate-reverse;
     left: -50%;
@@ -468,8 +410,6 @@ svg.main-logo-svg image {
     opacity: 0; /* Initial opacity 0 */
     transition: opacity 1s ease; /* Faster transition for sequence */
     pointer-events: none;
-    -webkit-mask-image: radial-gradient(ellipse at center, transparent 20%, black 60%);
-    mask-image: radial-gradient(ellipse at center, transparent 20%, black 60%);
 }
 
 .grid-item {
@@ -477,46 +417,91 @@ svg.main-logo-svg image {
     justify-content: center;
     align-items: center;
     opacity: 0.15;
-    transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out, filter 0.8s ease-in-out;
-    will-change: opacity, transform, filter;
+    transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out; /* Removed filter transition */
+    will-change: opacity, transform; /* Removed filter will-change */
+}
+
+/* Remove direct background application on grid-item if it exists elsewhere */
+.grid-item.grid-icon {
+    /* Ensure no background on parent */
+    background: none; 
 }
 
 .grid-item.active-pulse {
     opacity: 0.8;
     transform: scale(1.1);
-    filter: drop-shadow(0 0 8px var(--neon-purple));
+    /* filter: drop-shadow(0 0 8px var(--neon-purple)); Optimized: Removed expensive drop-shadow */
+    text-shadow: 0 0 8px var(--neon-purple); /* Cheaper alternative for text */
     z-index: 2;
 }
 
 .grid-item svg, .grid-item img {
-    width: 100%;
-    height: 100%;
-    max-width: 50px;
-    max-height: 50px;
+    /* Deprecated: Removed in favor of CSS background */
+    display: none;
+}
+
+.grid-item.grid-icon {
+    /* Removed background props from parent to fix stretching */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: filter 0.8s ease-in-out, transform 0.8s ease-in-out;
+}
+
+.grid-item.grid-icon::before {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 50px;
+    background-image: url('/assets/iconlogo-unicorno-lysa-chain.png');
+    background-size: contain; /* Preserves aspect ratio */
+    background-repeat: no-repeat;
+    background-position: center;
     filter: grayscale(100%) brightness(0.5) drop-shadow(0 0 1px var(--neon-purple)); 
-    object-fit: contain;
     transition: filter 0.8s ease-in-out;
 }
 
-.grid-item.active-pulse svg, .grid-item.active-pulse img {
-    filter: grayscale(0%) brightness(1.2) drop-shadow(0 0 10px var(--neon-purple));
-}
-
-.grid-item span {
+.grid-item.grid-text {
     font-family: 'Syne', sans-serif;
     font-weight: 800;
-    font-size: 0.8rem;
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* Apply active state to the pseudo-element */
+.grid-item.active-pulse.grid-icon::before {
+    filter: grayscale(0%) brightness(1.2) drop-shadow(0 0 5px var(--neon-purple));
+    transform: scale(1.1);
+}
+
+/* Remove old active state rule that targeted the parent for filter */
+.grid-item.active-pulse.grid-icon {
+    /* transform is handled on parent or child? 
+       Parent transform scales the whole box (including before). 
+       Child transform scales the icon inside. 
+       Let's keep parent transform for pulse effect if desired, 
+       but here we moved filter to child. */
+    transform: scale(1.1);
+}
+
+/* Removed deprecated .grid-item span styles as we use div textContent now */
+
+.grid-item.grid-text {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 0.8rem; /* Matched previous span size */
     color: rgba(255, 255, 255, 0.3);
     text-shadow: 0 0 2px var(--neon-purple);
     text-transform: uppercase;
     text-align: center;
     letter-spacing: 2px;
-    transition: color 0.8s, text-shadow 0.8s;
+    transition: color 0.8s, text-shadow 0.8s, transform 0.8s;
 }
 
-.grid-item.active-pulse span {
+.grid-item.active-pulse.grid-text {
     color: #fff;
-    text-shadow: 0 0 15px var(--neon-purple);
+    text-shadow: 0 0 10px var(--neon-purple);
+    transform: scale(1.1);
 }
 
 /* Hero Video Layer */
@@ -591,6 +576,40 @@ svg.main-logo-svg image {
     letter-spacing: 2px;
     color: #fff;
     text-shadow: 0 0 5px var(--neon-purple);
+}
+
+/* Content Flow - Stacks sections naturally */
+#content-flow {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    background: transparent;
+}
+
+/* Standard Section Style */
+.standard-section {
+    position: relative;
+    width: 100%;
+    min-height: 100vh; /* Full viewport height min */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 100px 0;
+    box-sizing: border-box;
+    
+    /* Default background - Transparent to show fixed gradient bg */
+    background: transparent; 
+    
+    /* Ensure visibility */
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+/* Spacer for initial scroll to allow fade out */
+#scroll-spacer {
+    height: 100vh; 
+    width: 100%;
+    pointer-events: none;
 }
 
 /* --- SECTIONS --- */

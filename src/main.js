@@ -1,8 +1,6 @@
 import './style.css';
 import { inject } from '@vercel/analytics';
 import { injectSpeedInsights } from '@vercel/speed-insights';
-import { Renderer } from 'interactive-shader-format';
-import purpleNoiseShader from './shaders/PurpleNoise.frag?raw';
 
 // Initialize Vercel Analytics
 inject();
@@ -54,53 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
         copyrightYear.textContent = new Date().getFullYear();
     }
 
-    // --- ISF Background Initialization ---
-    const isfCanvas = document.getElementById('isf-canvas');
-    const isfContainer = document.getElementById('isf-container');
-    let isfRenderer;
-    let isISFVisible = false; // Optimization flag
-
-    if (isfCanvas) {
-        try {
-            const gl = isfCanvas.getContext('webgl');
-            if (gl) {
-                isfRenderer = new Renderer(gl);
-                isfRenderer.loadSource(purpleNoiseShader);
-                
-                // Handle Resize
-                let lastISFWidth = 0;
-                const resizeISF = () => {
-                    // Ignore vertical resizes to prevent background reset on mobile scroll
-                    if (window.innerWidth === lastISFWidth) return;
-                    lastISFWidth = window.innerWidth;
-
-                    isfCanvas.width = window.innerWidth;
-                    isfCanvas.height = window.innerHeight;
-                };
-                window.addEventListener('resize', resizeISF);
-                resizeISF();
-
-                function renderISF() {
-                    if (isISFVisible) { 
-                        isfRenderer.draw(isfCanvas);
-                        requestAnimationFrame(renderISF);
-                    } else {
-                        // Pause loop when hidden, will be restarted by scroll handler
-                    }
-                }
-                
-                // Expose restart function
-                window.restartISF = function() {
-                    requestAnimationFrame(renderISF);
-                };
-                
-                requestAnimationFrame(renderISF);
-            }
-        } catch (e) {
-            console.error("ISF Init Failed:", e);
-        }
-    }
-
     // Grid Assets
     const keywords = ['EPIC', 'CRAZY', 'UNIQUE'];
     let gridItems = []; 
@@ -134,29 +85,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const rowCount = Math.ceil(window.innerHeight / cellSize);
         const cellCount = Math.ceil(colCount * rowCount * 1.2); 
         
+        // Use DocumentFragment to minimize reflows
+        const fragment = document.createDocumentFragment();
+
         for (let i = 0; i < cellCount; i++) {
             const cell = document.createElement('div');
             cell.classList.add('grid-item');
             cell.dataset.index = i;
-            gridLayer.appendChild(cell);
+            // gridLayer.appendChild(cell); // REMOVED: Direct append caused layout thrashing
+            fragment.appendChild(cell);
             gridItems.push(cell);
             assignPatternContent(cell, i);
             cell.style.opacity = '0.2'; 
         }
+        gridLayer.appendChild(fragment); // Batch append
     }
 
     function assignPatternContent(cell, index) {
-        cell.innerHTML = ''; 
+        // Optimization: Use CSS classes instead of creating DOM nodes for images
         if (index % 13 === 0) {
-            const word = keywords[index % keywords.length];
-            const span = document.createElement('span');
-            span.textContent = word;
-            cell.appendChild(span);
+            cell.classList.add('grid-text');
+            cell.textContent = keywords[index % keywords.length];
         } else {
-            const img = document.createElement('img');
-            img.src = '/assets/iconlogo-unicorno-lysa-chain.png';
-            img.alt = "Lysa Chain Icon";
-            cell.appendChild(img);
+            cell.classList.add('grid-icon');
+            // Background image handled in CSS to reduce DOM size
         }
     }
 
@@ -276,54 +228,37 @@ document.addEventListener('DOMContentLoaded', () => {
         const scrollY = window.scrollY;
         const windowHeight = window.innerHeight;
 
-        // Menu Visibility - Handled by Timer (always visible after 5s)
-        // We can add a check to hide it if user scrolls back to very top BEFORE 5s? 
-        // No, let's keep it simple. Once revealed, it stays (unless we want sticky behavior).
-        // Standard sticky header behavior usually involves checking scrollY.
-        // User said "video, after 5s appears... menu bar". 
-        // Let's ensure it stays visible if scrolled.
+        // Menu Visibility
         if (mainMenu && scrollY > 50) {
              mainMenu.classList.add('visible');
         }
 
-        // Hero Fade Logic
-        // Logo & Grid are revealed by TIMER. 
-        // We do NOT fade them in on scroll.
-        // We might want to fade them OUT if the user scrolls down (standard parallax).
-        // But user instructions focus on "appears after 5s".
-        // Let's leave them static and let the About section cover them.
+        // --- Fade Out Hero Elements on Scroll ---
+        // Video, Logo (in hero-layers), and Grid should fade to black/transparent
+        // as we scroll down.
         
-        // Scroll Indicator: Fade out on scroll
+        // Calculate opacity based on scroll.
+        // Start fading immediately, fully faded by 50-70% of viewport height.
+        const fadeStart = 0;
+        const fadeEnd = windowHeight * 0.7;
+        let heroOpacity = 1 - (scrollY / fadeEnd);
+        heroOpacity = Math.max(0, Math.min(1, heroOpacity));
+
+        // Apply to Hero Layers container if possible, or individual elements
+        const heroLayers = document.getElementById('hero-layers');
+        if (heroLayers) {
+            heroLayers.style.opacity = heroOpacity;
+            // Optimization: Hide if fully invisible to save GPU
+            heroLayers.style.visibility = heroOpacity <= 0.01 ? 'hidden' : 'visible';
+        }
+
+        // Scroll Indicator: Fade out faster
         if (scrollIndicator && scrollIndicator.classList.contains('visible')) {
              if (scrollY > 50) {
                   scrollIndicator.style.opacity = Math.max(0, 1 - (scrollY / 200));
              } else {
-                  scrollIndicator.style.opacity = ''; // Let CSS class handle it
+                  scrollIndicator.style.opacity = ''; 
              }
-        }
-
-        // ISF Opacity Logic
-        // Fade in as we scroll past the hero (approx 100vh)
-        // Full opacity by the time About section (150vh) is fully visible
-        if (isfContainer) {
-            // Start fading in when we scroll past 50% of the viewport
-            const fadeStart = windowHeight * 0.5;
-            // Fully opaque when we reach the spacer end (150vh) minus some buffer
-            const fadeEnd = windowHeight * 1.2;
-            
-            let opacity = (scrollY - fadeStart) / (fadeEnd - fadeStart);
-            opacity = Math.max(0, Math.min(1, opacity));
-            
-            // Apply opacity
-            isfContainer.style.opacity = opacity;
-            
-            // Update visibility flag for renderer
-            const wasVisible = isISFVisible;
-            isISFVisible = opacity > 0.01;
-            
-            if (!wasVisible && isISFVisible && window.restartISF) {
-                window.restartISF();
-            }
         }
     }
     
