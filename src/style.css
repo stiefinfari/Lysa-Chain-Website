@@ -219,10 +219,9 @@ svg.main-logo-svg image {
     width: 100%;
     height: 100vh; /* Viewport height */
     z-index: -5; /* Deepest background */
-    background: radial-gradient(circle at 50% 50%, #1a0525, #000000);
+    background: radial-gradient(circle at center, #2a0048 0%, #1a0525 50%, #000000 100%);
     overflow: hidden;
-    opacity: 0;
-    transition: opacity 1s ease;
+    opacity: 1; /* Visible by default */
     will-change: opacity;
 }
 
@@ -231,30 +230,9 @@ body {
     background-color: #000;
 }
 
+/* Removed animated blobs */
 #gradient-bg::before, #gradient-bg::after {
-    content: '';
-    position: absolute;
-    width: 150vw;
-    height: 150vh;
-    border-radius: 40%;
-    /* Optimized: Use radial gradient instead of heavy blur filter */
-    background: radial-gradient(circle, rgba(90,0,90,0.4) 0%, rgba(0,0,0,0) 70%);
-    opacity: 0.6; /* Increased slightly to compensate for loss of solid color */
-    animation: moveBlob 15s infinite alternate linear;
-    will-change: transform;
-}
-
-#gradient-bg::after {
-    background: radial-gradient(circle, rgba(42,0,72,0.4) 0%, rgba(0,0,0,0) 70%);
-    animation-duration: 20s;
-    animation-direction: alternate-reverse;
-    left: -50%;
-    top: -50%;
-}
-
-@keyframes moveBlob {
-    0% { transform: translate(0, 0) rotate(0deg); }
-    100% { transform: translate(20%, 20%) rotate(360deg); }
+    display: none;
 }
 
 /* Menu Bar */
