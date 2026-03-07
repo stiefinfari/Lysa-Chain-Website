@@ -4,18 +4,19 @@
   --text-color: #ffffff;
 }
 
+/* Ensure Body background doesn't cover gradient */
 body, html {
   margin: 0;
   padding: 0;
   width: 100%;
   min-height: 100%;
   font-family: 'Syne', sans-serif;
-  background-color: var(--bg-color);
+  background-color: transparent; /* Changed from black to transparent */
   color: var(--text-color);
   overflow-x: hidden;
   overflow-y: auto;
   scroll-behavior: smooth;
-  cursor: auto; /* Restore default cursor */
+  cursor: auto; 
 }
 
 /* Force hide cursor on all interactive elements to prevent "hand" icon */
@@ -219,15 +220,16 @@ svg.main-logo-svg image {
     width: 100%;
     height: 100vh; /* Viewport height */
     z-index: -5; /* Deepest background */
-    background: radial-gradient(circle at center, #2a0048 0%, #1a0525 50%, #000000 100%);
+    /* Increased brightness and size of the radial gradient to be more visible */
+    background: radial-gradient(circle at center, #4a0072 0%, #2a0048 40%, #000000 100%);
     overflow: hidden;
-    opacity: 1; /* Visible by default */
+    opacity: 1 !important; /* Force visibility */
     will-change: opacity;
 }
 
 /* Add a static base color for body to handle overscroll/loading */
 body {
-    background-color: #000;
+    background-color: transparent;
 }
 
 /* Removed animated blobs */
