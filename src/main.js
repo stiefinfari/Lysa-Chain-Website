@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const heroVideo = document.getElementById('hero-video');
     const logoContainer = document.getElementById('logo-layer');
     const heroVideoLayer = document.getElementById('hero-video-layer');
-    const gradientBg = document.getElementById('gradient-bg');
+    // const gradientBg = document.getElementById('gradient-bg'); // Removed
     const gridLayer = document.getElementById('grid-layer');
     const mainMenu = document.getElementById('main-menu');
     const scrollIndicator = document.querySelector('.scroll-indicator');
@@ -80,10 +80,11 @@ document.addEventListener('DOMContentLoaded', () => {
         gridLayer.innerHTML = '';
         gridItems = [];
         
-        const cellSize = window.innerWidth < 768 ? 80 : 120; // Optimization: Larger cells on desktop to reduce DOM nodes
+        // Optimization: Significantly increased cell size to reduce DOM nodes
+        const cellSize = window.innerWidth < 768 ? 100 : 150; 
         const colCount = Math.ceil(window.innerWidth / cellSize);
         const rowCount = Math.ceil(window.innerHeight / cellSize);
-        const cellCount = Math.ceil(colCount * rowCount * 1.2); 
+        const cellCount = Math.ceil(colCount * rowCount); // Removed 1.2 multiplier to reduce off-screen nodes
         
         // Use DocumentFragment to minimize reflows
         const fragment = document.createDocumentFragment();
@@ -92,13 +93,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const cell = document.createElement('div');
             cell.classList.add('grid-item');
             cell.dataset.index = i;
-            // gridLayer.appendChild(cell); // REMOVED: Direct append caused layout thrashing
             fragment.appendChild(cell);
             gridItems.push(cell);
             assignPatternContent(cell, i);
-            cell.style.opacity = '0.2'; 
+            cell.style.opacity = '0.15'; // Slightly reduced opacity for performance/aesthetics
         }
-        gridLayer.appendChild(fragment); // Batch append
+        gridLayer.appendChild(fragment); 
     }
 
     function assignPatternContent(cell, index) {
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2. Dismiss Preloader & Start Reveal Timer
     if (preloader) {
-        const totalDuration = 2000; // Reduced from 3500ms for better LCP
+        const totalDuration = 5000; // Increased to allow full logo animation
         setTimeout(() => {
             preloader.style.opacity = '0';
             preloader.style.pointerEvents = 'none'; 
@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         startHeroSequence();
                     }, 100);
                 }
-            }, 500); // Reduced fade out buffer
+            }, 800); // Increased to match CSS transition
         }, totalDuration);
     } else {
         if (mainContent) {
@@ -233,15 +233,20 @@ document.addEventListener('DOMContentLoaded', () => {
              mainMenu.classList.add('visible');
         }
 
-        // --- Fade Out Hero Elements on Scroll ---
-        // Video, Logo (in hero-layers), and Grid should fade to black/transparent
-        // as we scroll down.
+        // --- Fade Out Hero Elements on Scroll (Smooth & Gradual) ---
+        // Video, Logo (in hero-layers), and Grid should fade to transparent
+        // as we scroll down to reveal the unified background behind content.
         
         // Calculate opacity based on scroll.
-        // Start fading immediately, fully faded by 50-70% of viewport height.
-        const fadeStart = 0;
-        const fadeEnd = windowHeight * 0.7;
-        let heroOpacity = 1 - (scrollY / fadeEnd);
+        // Start fading at 10% scroll, fully faded by 80% of viewport height.
+        const fadeStart = windowHeight * 0.1;
+        const fadeEnd = windowHeight * 0.8;
+        
+        let heroOpacity = 1;
+        if (scrollY > fadeStart) {
+            heroOpacity = 1 - ((scrollY - fadeStart) / (fadeEnd - fadeStart));
+        }
+        
         heroOpacity = Math.max(0, Math.min(1, heroOpacity));
 
         // Apply to Hero Layers container if possible, or individual elements

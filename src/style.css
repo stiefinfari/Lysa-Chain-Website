@@ -4,14 +4,14 @@
   --text-color: #ffffff;
 }
 
-/* Ensure Body background doesn't cover gradient */
+/* Ensure Body background is BLACK by default */
 body, html {
   margin: 0;
   padding: 0;
   width: 100%;
   min-height: 100%;
   font-family: 'Syne', sans-serif;
-  background-color: transparent; /* Changed from black to transparent */
+  background-color: #000000;
   color: var(--text-color);
   overflow-x: hidden;
   overflow-y: auto;
@@ -153,9 +153,9 @@ svg.main-logo-svg image {
 }
 
 @keyframes neonPass {
-  0% { filter: drop-shadow(0 0 0 transparent); }
-  50% { filter: drop-shadow(0 0 10px #b026ff) drop-shadow(0 0 20px #8B00FF) brightness(1.2); } /* Optimized: Reduced shadow radius */
-  100% { filter: drop-shadow(0 0 0 transparent); }
+  0% { filter: blur(0) drop-shadow(0 0 0 transparent); }
+  50% { filter: blur(0) drop-shadow(0 0 15px #b026ff) drop-shadow(0 0 30px #b026ff) brightness(1.5); }
+  100% { filter: blur(0) drop-shadow(0 0 0 transparent); }
 }
 
 /* Preloader Logo Animation */
@@ -163,14 +163,14 @@ svg.main-logo-svg image {
     animation: appearBlur 1.0s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards, neonPass 1.0s ease-in-out;
 }
 
-#Livello { animation-delay: 200ms, 2800ms; }
-#image1 { animation-delay: 350ms, 2650ms; }
-#image2 { animation-delay: 500ms, 2500ms; }
-#image3 { animation-delay: 650ms, 2350ms; }
-#image4 { animation-delay: 800ms, 2200ms; }
-#image5 { animation-delay: 950ms, 2050ms; }
-#image6 { animation-delay: 1100ms, 1900ms; }
-#image7 { animation-delay: 1250ms, 1750ms; }
+#image7 { animation-delay: 1250ms, 2300ms; } /* Top (y=6) */
+#image3 { animation-delay: 650ms, 2450ms; }  /* y=224 */
+#image4 { animation-delay: 800ms, 2600ms; }  /* y=241 */
+#image6 { animation-delay: 1100ms, 2750ms; } /* y=247 */
+#image5 { animation-delay: 950ms, 2900ms; }  /* y=394 */
+#image2 { animation-delay: 500ms, 3050ms; }  /* y=401 */
+#image1 { animation-delay: 350ms, 3200ms; }  /* y=522 */
+#Livello { animation-delay: 200ms, 3350ms; } /* Bottom (y=536) */
 
 /* Hero Logo Animation */
 #L, #Y, #S, #hero-image1, #C, #H, #A, #I, #N {
@@ -206,36 +206,122 @@ svg.main-logo-svg image {
     height: 100dvh; /* Mobile browser address bar fix */
     z-index: 0;
     pointer-events: none; /* Let scroll pass through */
-    transition: opacity 0.1s linear, visibility 0.1s linear; /* Smooth fade on scroll */
+    transition: opacity 0.3s linear, visibility 0.3s linear; /* Restored smooth opacity transition */
     will-change: opacity;
 }
 
 /* ISF Background Container REMOVED */
 
-/* Background Gradient Animation - Now Main Background */
-#gradient-bg {
-    position: fixed; /* Changed from absolute to fixed to cover all scroll */
+/* Background Gradient - Unified Fixed Background */
+#unified-background {
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100vh; /* Viewport height */
-    z-index: -5; /* Deepest background */
-    /* Increased brightness and size of the radial gradient to be more visible */
-    background: radial-gradient(circle at center, #4a0072 0%, #2a0048 40%, #000000 100%);
+    height: 100vh;
+    z-index: -1;
+    /* Static Modern Mesh Gradient - Optimized */
+    background: 
+        radial-gradient(at 0% 0%, hsla(276,68%,15%,1) 0, transparent 50%), 
+        radial-gradient(at 100% 0%, hsla(260,60%,10%,1) 0, transparent 50%), 
+        radial-gradient(at 100% 100%, hsla(280,70%,8%,1) 0, transparent 50%), 
+        radial-gradient(at 0% 100%, hsla(290,50%,12%,1) 0, transparent 50%),
+        linear-gradient(135deg, #000000 0%, #0a020f 100%);
+    background-size: 100% 100%; /* No zoom */
+    pointer-events: none;
+    /* Removed heavy animation */
+}
+
+/* Add texture overlay for better quality */
+#unified-background::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    pointer-events: none;
+}
+
+/* Subtle moving nebula effect */
+#unified-background::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(176, 38, 255, 0.08) 0%, transparent 60%);
+    opacity: 0.6;
+    animation: slowRotate 40s linear infinite;
+    pointer-events: none;
+    will-change: transform;
+}
+
+@keyframes slowRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Floating Particles Animation (CSS Only - Lightweight) */
+.particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
-    opacity: 1 !important; /* Force visibility */
-    will-change: opacity;
+}
+
+.particles::before, .particles::after {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: transparent;
+    box-shadow: 
+        10vw 10vh 2px #b026ff,
+        20vw 80vh 1px #fff,
+        40vw 40vh 2px #b026ff,
+        60vw 20vh 1px #fff,
+        80vw 60vh 2px #b026ff,
+        90vw 90vh 1px #fff,
+        15vw 50vh 2px #b026ff,
+        35vw 10vh 1px #fff,
+        55vw 80vh 2px #b026ff,
+        75vw 30vh 1px #fff;
+    opacity: 0.6;
+    animation: floatParticles 20s linear infinite;
+}
+
+.particles::after {
+    box-shadow: 
+        5vw 90vh 2px #b026ff,
+        25vw 20vh 1px #fff,
+        45vw 60vh 2px #b026ff,
+        65vw 10vh 1px #fff,
+        85vw 50vh 2px #b026ff,
+        95vw 30vh 1px #fff,
+        10vw 40vh 2px #b026ff,
+        30vw 70vh 1px #fff,
+        50vw 10vh 2px #b026ff,
+        70vw 90vh 1px #fff;
+    animation: floatParticles 30s linear infinite reverse;
+    opacity: 0.4;
+}
+
+@keyframes floatParticles {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-100vh); }
 }
 
 /* Add a static base color for body to handle overscroll/loading */
 body {
-    background-color: transparent;
+    background-color: transparent; /* Changed from #000000 */
 }
 
-/* Removed animated blobs */
-#gradient-bg::before, #gradient-bg::after {
-    display: none;
-}
 
 /* Menu Bar */
 #main-menu {
@@ -577,8 +663,8 @@ body {
     padding: 100px 0;
     box-sizing: border-box;
     
-    /* Default background - Transparent to show fixed gradient bg */
-    background: transparent; 
+    /* Background Transparent - Using Unified Background */
+    background: transparent;
     
     /* Ensure visibility */
     opacity: 1 !important;
@@ -683,7 +769,7 @@ body {
 }
 
 .music-card {
-    background: rgba(20, 20, 20, 0.6);
+    background: rgba(20, 20, 20, 0.3); /* More transparent */
     backdrop-filter: blur(10px);
     border: 1px solid var(--neon-purple);
     border-radius: 16px;
@@ -738,7 +824,7 @@ body {
     width: 100%;
     box-shadow: 0 10px 40px rgba(0,0,0,0.5);
     border: none;
-    background: #000; /* Prevent white flash */
+    background: transparent; /* Changed from #000 */
     display: block;
 }
 
@@ -782,8 +868,8 @@ body {
 
 /* VIDEO SECTION */
 #video-content-layer {
-    /* Special background for video section to allow geometric bg to show */
-    background: rgba(0,0,0,0.6);
+    /* Uses the standard section gradient now */
+    background: transparent;
 }
 
 .section-video-bg {
@@ -833,7 +919,7 @@ body {
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 0 30px rgba(176, 38, 255, 0.3);
-    background: #000;
+    background: transparent; /* Changed from #000 */
     border: 1px solid var(--neon-purple);
     padding: 4px;
     position: relative; /* Ensure overlay positioning */
@@ -896,7 +982,7 @@ body {
 .video-card {
     flex: 0 0 400px;
     scroll-snap-align: center;
-    background: rgba(20, 20, 20, 0.6);
+    background: rgba(20, 20, 20, 0.3); /* More transparent */
     backdrop-filter: blur(10px);
     border: 1px solid var(--neon-purple);
     border-radius: 16px;
@@ -1281,8 +1367,10 @@ body {
 
 /* --- FOOTER --- */
 .site-footer {
+    position: relative;
+    z-index: 10;
     width: 100%;
-    padding: 60px 20px;
+    padding: 40px 20px;
     text-align: center;
     color: rgba(255, 255, 255, 0.6);
     font-family: 'Syne', sans-serif;
@@ -1292,8 +1380,9 @@ body {
     align-items: center;
     gap: 30px;
     margin-top: 0; /* Removed gap to merge with content flow */
-    background: rgba(0, 0, 0, 0.6); /* Match standard-section background */
-    backdrop-filter: blur(5px); /* Match standard-section blur */
+    background: transparent; /* Match standard-section background */
+    border-top: none; /* Removed purple border */
+    backdrop-filter: none; /* Removed blur to match sections */
 }
 
 .footer-content, .footer-legal {
@@ -1358,7 +1447,7 @@ body {
 }
 
 .separator {
-    color: rgba(255, 255, 255, 0.3);
+    display: none;
 }
 
 /* --- COOKIE BANNER --- */
