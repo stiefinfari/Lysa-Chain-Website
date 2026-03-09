@@ -386,6 +386,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const YOUTUBE_CHANNEL_ID = 'UC0Yah4pYx76fqTCup7LF-iQ'; 
     const RSS_URL = `https://api.rss2json.com/v1/api.json?rss_url=https://www.youtube.com/feeds/videos.xml?channel_id=${YOUTUBE_CHANNEL_ID}`;
     
+    // Fallback Videos (Hardcoded in case API fails)
+    const FALLBACK_VIDEOS = [
+        {
+            guid: 'yt:video:eQpK3q0sHm0',
+            title: 'Lysa Chain - Live @ DJanes.net Italy 24.11.2023 / Melodic Techno & Progressive House DJ Mix',
+            pubDate: '2023-11-24 12:00:00'
+        },
+        {
+            guid: 'yt:video:SGH1ZaYUMXY',
+            title: 'Lysa Chain - Live set @ DHOME Club',
+            pubDate: '2023-01-08 12:00:00'
+        },
+        {
+            guid: 'yt:video:B2JQuG0XnP0',
+            title: 'Lysa Chain - Melodic techno Live set',
+            pubDate: '2022-06-01 12:00:00' // Estimated based on context
+        },
+        {
+            guid: 'yt:video:Bud5c2Gy12g',
+            title: 'Lysa Chain - Live @ DJanes.net 25.11.2021',
+            pubDate: '2021-11-25 12:00:00'
+        },
+        {
+            guid: 'yt:video:yJa4ZOx4uNw',
+            title: 'Lysa Chain | Castle of Toppo | Italy',
+            pubDate: '2020-11-27 12:00:00'
+        }
+    ];
+
     // Featured Video Container
     const featuredContainer = document.getElementById('featured-video-container');
     const carouselContainer = document.getElementById('dynamic-video-carousel');
@@ -396,35 +425,37 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             if (data.status === 'ok' && data.items.length > 0) {
                 const videos = data.items;
-                
-                // 1. Featured Video (Latest)
-                const latestVideo = videos[0];
-                updateFeaturedVideo(latestVideo);
-
-                // 2. Carousel (Rest)
-                const carouselVideos = videos.slice(1);
-                renderCarousel(carouselVideos);
+                processVideos(videos);
             } else {
-                throw new Error('No items found');
+                throw new Error('No items found or API error');
             }
         })
         .catch(err => {
-            console.warn('YouTube Fetch Error:', err);
-            // Fallback content logic preserved but simplified for modal context
-            if (featuredContainer) {
-                // Keep default iframe for fallback but maybe add click listener if we had a default ID
-                featuredContainer.innerHTML = `
-                    <iframe 
-                        src="https://www.youtube.com/embed/videoseries?list=PLB5A7F85854619376" 
-                        title="Lysa Chain Latest" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" 
-                        allowfullscreen>
-                    </iframe>`;
-            }
-            if (carouselContainer) {
-                carouselContainer.innerHTML = '<p style="color:white; text-align:center;">Check out more on YouTube!</p>';
-            }
+            console.warn('YouTube Fetch Error, using fallback:', err);
+            processVideos(FALLBACK_VIDEOS);
         });
+
+    function processVideos(videos) {
+        if (!videos || videos.length === 0) return;
+
+        // Sort videos by date (Newest first)
+        // Ensure we handle cases where pubDate might be missing (though unlikely in RSS)
+        videos.sort((a, b) => {
+            const dateA = new Date(a.pubDate || 0);
+            const dateB = new Date(b.pubDate || 0);
+            return dateB - dateA;
+        });
+
+        // 1. Featured Video (Latest)
+        const latestVideo = videos[0];
+        updateFeaturedVideo(latestVideo);
+
+        // 2. Carousel (Rest)
+        // If we have enough videos, skip the first one for carousel. 
+        // If few, maybe show all in carousel? Let's follow original logic: slice(1)
+        const carouselVideos = videos.length > 1 ? videos.slice(1) : videos;
+        renderCarousel(carouselVideos);
+    }
 
     // Helper to escape HTML to prevent XSS
     function escapeHTML(str) {
