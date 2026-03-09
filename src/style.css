@@ -1597,6 +1597,7 @@ body {
         transform: none;
     }
 
+    /* Restore Hamburger */
     .menu-toggle {
         display: flex;
         position: fixed;
@@ -1610,6 +1611,7 @@ body {
         margin: -10px; /* Compensate for padding to keep visual position */
     }
 
+    /* Dropdown Menu */
     .nav-links {
         position: fixed;
         top: 80px; /* Below the hamburger */
@@ -1636,6 +1638,11 @@ body {
         z-index: 1000;
         backdrop-filter: blur(20px) saturate(180%);
         -webkit-backdrop-filter: blur(20px) saturate(180%);
+        overflow-y: auto;
+    }
+
+    .nav-links::-webkit-scrollbar {
+        display: none; /* Chrome/Safari */
     }
 
     .nav-links.active {
@@ -1646,12 +1653,17 @@ body {
     }
 
     .nav-links li a {
-        font-size: 1.5rem; /* Smaller font for dropdown */
+        font-size: 1.5rem; /* Larger font for dropdown */
         text-transform: uppercase;
         letter-spacing: 2px;
         text-shadow: 0 0 10px rgba(176, 38, 255, 0.5);
         text-align: center; /* Center align text */
         display: block;
+        padding: 10px;
+    }
+    
+    .nav-logo-svg {
+        height: 40px; /* Larger logo in menu */
     }
 
     /* Hero Logo - Smaller */
