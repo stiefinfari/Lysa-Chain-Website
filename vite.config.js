@@ -43,6 +43,7 @@ export default defineConfig({
         main: 'index.html',
         cookie: 'cookie-policy.html',
         privacy: 'privacy-policy.html',
+        not_found: '404.html',
       },
       output: {
         // manualChunks removed to fix Rolldown compatibility

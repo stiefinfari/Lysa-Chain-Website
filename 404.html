@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/pwa-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/pwa-512x512.png">
+    <link rel="apple-touch-icon" href="/pwa-192x192.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>404 - Page Not Found | Lysa Chain</title>
+    <meta name="description" content="Page not found. Return to Lysa Chain's official website to listen to the latest sets, releases and exclusive tracks.">
+    <meta name="robots" content="noindex, follow">
+
+    <meta name="theme-color" content="#b026ff">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Background Gradient (Persistent) -->
+    <div id="unified-background">
+        <div class="particles"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <!-- Standard Nav -->
+        <nav id="main-menu">
+            <div class="menu-toggle" id="mobile-menu-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/#about-layer">About</a></li>
+                <li><a href="/#music-layer">Music</a></li>
+                <li class="nav-logo">
+                    <a href="/">
+                        <img src="/assets/iconlogo-unicorno-lysa-chain-scomposto.svg" alt="Home" class="nav-logo-svg">
+                    </a>
+                </li>
+                <li><a href="/#video-content-layer">Video</a></li>
+                <li><a href="/#contact-layer">Contact</a></li>
+            </ul>
+        </nav>
+
+        <main class="error-page-container">
+            <h1 class="error-code glitch-effect">404</h1>
+            <h2 class="error-message">Track Not Found</h2>
+            <p class="error-description">
+                The page you are looking for seems to have skipped a beat. It might have been moved, deleted, or never existed.
+            </p>
+            
+            <div class="error-actions">
+                <a href="/" class="btn-home">
+                    <i class="fa-solid fa-house"></i> Back to Home
+                </a>
+                <a href="/#music-layer" class="btn-secondary">
+                    <i class="fa-solid fa-music"></i> Listen to Music
+                </a>
+                <a href="/#contact-layer" class="btn-secondary">
+                    <i class="fa-solid fa-envelope"></i> Contact
+                </a>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="site-footer" style="position: relative; z-index: 10; margin-top: auto;">
+            <div class="footer-content">
+                <p>made with <span class="heart">♥</span> by</p>
+                <a href="https://www.gaiacirclelab.com" target="_blank" rel="noopener noreferrer">
+                    <img src="/assets/gcl-logo-text.webp" alt="Gaia Circle Lab Logo" class="footer-logo">
+                </a>
+            </div>
+            <div class="footer-legal">
+                <p>&copy; <span id="copyright-year">2026</span> Lysa Chain. All rights reserved.</p>
+                <div class="legal-links">
+                    <a href="/privacy-policy">Privacy Policy</a>
+                    <span class="separator">|</span>
+                    <a href="/cookie-policy">Cookie Policy</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>
