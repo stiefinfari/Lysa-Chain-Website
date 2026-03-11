@@ -51,6 +51,36 @@ body, html {
     a, button, .clickable, .carousel-nav, .social-btn, .youtube-btn, .iframe-overlay {
         cursor: pointer !important;
     }
+
+    #unified-background::after {
+        animation: none;
+    }
+
+    .particles::before, .particles::after {
+        animation: none;
+        opacity: 0.25;
+    }
+
+    #hero-video {
+        filter: none;
+    }
+
+    .about-title, .music-title, .video-title, .contact-title {
+        filter: none;
+    }
+
+    #main-menu, .music-card, .video-card, .social-btn, .social-icon-btn, .cookie-banner, .video-modal {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+
+    .grid-item.grid-icon::before {
+        filter: grayscale(100%) brightness(0.5);
+    }
+
+    .grid-item.active-pulse.grid-icon::before {
+        filter: grayscale(0%) brightness(1.1);
+    }
 }
 
 /* Screen Reader Only */
@@ -88,6 +118,23 @@ body, html {
     opacity: 1;
 }
 
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    #unified-background::after,
+    .particles::before,
+    .particles::after,
+    .scroll-indicator svg,
+    .glitch-effect {
+        animation: none !important;
+    }
+}
+
 /* Ensure transitions don't conflict after load for complex elements */
 /* We combine the transitions for specific elements if needed, 
    but usually the cascade handles it if we don't overwrite 'transition' property globally on hover 
@@ -98,53 +145,12 @@ body.no-scroll {
     height: 100vh;
 }
 
-/* Preloader */
-#preloader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  height: 100dvh;
-  background-color: #000000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  transition: opacity 0.8s ease-out;
-  overflow: hidden;
-}
-
-.logo-container {
-  width: 80%;
-  max-width: 500px;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  padding: 50px;
-  overflow: visible;
-}
-
-/* SVG Styles */
-svg.main-logo-svg {
-  width: 100%;
-  height: auto;
-  max-height: 50vh;
-  display: block;
-  overflow: visible !important;
-}
-
 svg.hero-logo-svg {
   width: 100%;
   height: auto;
   max-height: 35vh;
   display: block;
   overflow: visible !important;
-}
-
-svg.main-logo-svg image {
-  will-change: opacity, filter;
-  opacity: 0;
 }
 
 @keyframes appearBlur {
@@ -158,35 +164,29 @@ svg.main-logo-svg image {
   100% { filter: blur(0) drop-shadow(0 0 0 transparent); }
 }
 
-/* Preloader Logo Animation */
-#Livello, #image1, #image2, #image3, #image4, #image5, #image6, #image7 {
-    animation: appearBlur 1.0s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards, neonPass 1.0s ease-in-out;
-}
-
-#image7 { animation-delay: 1250ms, 2300ms; } /* Top (y=6) */
-#image3 { animation-delay: 650ms, 2450ms; }  /* y=224 */
-#image4 { animation-delay: 800ms, 2600ms; }  /* y=241 */
-#image6 { animation-delay: 1100ms, 2750ms; } /* y=247 */
-#image5 { animation-delay: 950ms, 2900ms; }  /* y=394 */
-#image2 { animation-delay: 500ms, 3050ms; }  /* y=401 */
-#image1 { animation-delay: 350ms, 3200ms; }  /* y=522 */
-#Livello { animation-delay: 200ms, 3350ms; } /* Bottom (y=536) */
-
 /* Hero Logo Animation */
-#L, #Y, #S, #hero-image1, #C, #H, #A, #I, #N {
+.hero-logo-svg.hero-anim-start #L,
+.hero-logo-svg.hero-anim-start #Y,
+.hero-logo-svg.hero-anim-start #S,
+.hero-logo-svg.hero-anim-start #hero-image1,
+.hero-logo-svg.hero-anim-start #C,
+.hero-logo-svg.hero-anim-start #H,
+.hero-logo-svg.hero-anim-start #A,
+.hero-logo-svg.hero-anim-start #I,
+.hero-logo-svg.hero-anim-start #N {
     animation: appearBlur 1.0s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards, neonPass 1.0s ease-in-out;
     opacity: 0; /* Ensure hidden initially */
 }
 
-#L { animation-delay: 200ms, 2800ms; }
-#Y { animation-delay: 350ms, 2650ms; }
-#S { animation-delay: 500ms, 2500ms; }
-#hero-image1 { animation-delay: 650ms, 2350ms; }
-#C { animation-delay: 800ms, 2200ms; }
-#H { animation-delay: 950ms, 2050ms; }
-#A { animation-delay: 1100ms, 1900ms; }
-#I { animation-delay: 1250ms, 1750ms; }
-#N { animation-delay: 1400ms, 1600ms; }
+.hero-logo-svg.hero-anim-start #L { animation-delay: 200ms, 2800ms; }
+.hero-logo-svg.hero-anim-start #Y { animation-delay: 350ms, 2650ms; }
+.hero-logo-svg.hero-anim-start #S { animation-delay: 500ms, 2500ms; }
+.hero-logo-svg.hero-anim-start #hero-image1 { animation-delay: 650ms, 2350ms; }
+.hero-logo-svg.hero-anim-start #C { animation-delay: 800ms, 2200ms; }
+.hero-logo-svg.hero-anim-start #H { animation-delay: 950ms, 2050ms; }
+.hero-logo-svg.hero-anim-start #A { animation-delay: 1100ms, 1900ms; }
+.hero-logo-svg.hero-anim-start #I { animation-delay: 1250ms, 1750ms; }
+.hero-logo-svg.hero-anim-start #N { animation-delay: 1400ms, 1600ms; }
 
 /* Main Content */
 #main-content {
@@ -1977,4 +1977,3 @@ body {
         width: 100%;
     }
 }
-

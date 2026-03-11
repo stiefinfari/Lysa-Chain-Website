@@ -12,36 +12,39 @@ document.addEventListener('DOMContentLoaded', () => {
     // console.log("Main.js loaded - Optimization v1");
     // document.body.classList.add('no-scroll'); // Disabled for better UX
     
-    const preloader = document.getElementById('preloader');
-    const mainContent = document.getElementById('main-content');
     const heroVideo = document.getElementById('hero-video');
-    const logoContainer = document.getElementById('logo-layer');
-    const heroVideoLayer = document.getElementById('hero-video-layer');
     // const gradientBg = document.getElementById('gradient-bg'); // Removed
     const gridLayer = document.getElementById('grid-layer');
     const mainMenu = document.getElementById('main-menu');
     const scrollIndicator = document.querySelector('.scroll-indicator');
+    const heroLayers = document.getElementById('hero-layers');
+    const heroSvg = document.querySelector('.hero-logo-svg');
+    const prefersReducedMotion = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false;
+    const scrollBehavior = prefersReducedMotion ? 'auto' : 'smooth';
     
     // --- VIDEO HERO MOBILE AUTOPLAY FIX ---
     // Ensure video plays on mobile by forcing play() on touchstart if needed
     // and checking playsinline/muted attributes which are already in HTML
-    if (heroVideo) {
-        // Force muted for autoplay policy
+    let heroVideoStarted = false;
+    function shouldAutoplayHeroVideo() {
+        if (!heroVideo || prefersReducedMotion) return false;
+        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        if (connection && (connection.saveData || /(^|\b)(slow-2g|2g)(\b|$)/i.test(connection.effectiveType || ''))) return false;
+        return true;
+    }
+
+    function startHeroVideo() {
+        if (!heroVideo || heroVideoStarted) return;
+        heroVideoStarted = true;
         heroVideo.muted = true;
-        
-        // Attempt play immediately
         const playPromise = heroVideo.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(error => {
-                console.warn("Autoplay prevented:", error);
-                // Add one-time touch listener to start video
-                const startVideo = () => {
-                    heroVideo.play();
-                    document.removeEventListener('touchstart', startVideo);
-                    document.removeEventListener('click', startVideo);
+        if (playPromise && typeof playPromise.catch === 'function') {
+            playPromise.catch(() => {
+                const resume = () => {
+                    heroVideo.play().catch(() => {});
                 };
-                document.addEventListener('touchstart', startVideo);
-                document.addEventListener('click', startVideo);
+                window.addEventListener('pointerdown', resume, { once: true, passive: true });
+                window.addEventListener('touchstart', resume, { once: true, passive: true });
             });
         }
     }
@@ -123,89 +126,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // Background image handled in CSS to reduce DOM size
         }
     }
-
-    // 1. Initialize Hero SVG (Hide initially)
-    const heroSvg = document.querySelector('.hero-logo-svg');
-    if (heroSvg) {
-        // Prepare for animation: Hide all parts initially
-        heroSvg.querySelectorAll('image, path, g').forEach(el => {
-            el.style.opacity = '0';
-            el.style.animation = 'none';
-        });
-    }
-
-    // 2. Dismiss Preloader & Start Reveal Timer
-    const isBot = /bot|googlebot|crawler|spider|robot|crawling/i.test(navigator.userAgent);
-    
-    if (isBot) {
-        // Instant reveal for bots
-        if (preloader) preloader.style.display = 'none';
-        if (mainContent) {
-            mainContent.style.display = 'block';
-            mainContent.style.opacity = '1';
-        }
-        // Ensure hero sequence elements are visible
-        if (gridLayer) gridLayer.style.opacity = '0.8';
-        if (mainMenu) mainMenu.classList.add('visible');
-    } else if (preloader) {
-        const totalDuration = 5000; // Increased to allow full logo animation
-        setTimeout(() => {
-            preloader.style.opacity = '0';
-            preloader.style.pointerEvents = 'none'; 
-
-            setTimeout(() => {
-                preloader.style.display = 'none';
-                if (mainContent) {
-                    mainContent.style.display = 'block';
-                    // Force reflow
-                    void mainContent.offsetWidth; 
-                    mainContent.style.opacity = '1';
-                    
-                    if (heroVideo) {
-                        heroVideo.play().catch(e => console.warn("Autoplay:", e));
-                    }
-
-                    // Start Sequence immediately (reduced from 5000ms)
-                    setTimeout(() => {
-                        startHeroSequence();
-                    }, 100);
-                }
-            }, 800); // Increased to match CSS transition
-        }, totalDuration);
-    } else {
-        // Fallback for no preloader
-        setTimeout(() => {
-            startHeroSequence();
-        }, 100);
-    }
+    requestAnimationFrame(() => {
+        startHeroSequence();
+    });
 
     function startHeroSequence() {
-        // 1. Logo Reveal (Letter by Letter) - T=0 (relative to 5s)
-        const heroSvg = document.querySelector('.hero-logo-svg');
         if (heroSvg) {
-            const elements = heroSvg.querySelectorAll('image, path, g');
-            elements.forEach(el => {
-                // Restore animation (assuming CSS handles delays based on IDs)
-                // We need to re-apply the animation class/properties
-                // Since we set animation = 'none' above, we remove that inline style
-                el.style.animation = ''; 
-                // The CSS for #C, #H etc triggers 'appearBlur'. 
-                // However, since they were already in DOM (just hidden), CSS animation might have 'finished'.
-                // To restart, we force reflow or toggle class.
-                // Best way: set animation explicitly
-                
-                // Get the computed animation delay from CSS if possible, or use standard
-                // The IDs match the CSS rules (#C, #H etc).
-                // Just clearing style.animation should let CSS take over IF the element is considered "new" or we force it.
-                // Let's force a re-trigger by setting animation name explicitly.
-                const id = el.id;
-                // We'll rely on the CSS rules for #C, #H etc. 
-                // But we need to make sure opacity goes to 1 via animation.
-                
-                el.style.animation = 'none';
-                void el.offsetWidth; // trigger reflow
-                el.style.animation = ''; // Revert to CSS rule
-            });
+            heroSvg.classList.add('hero-anim-start');
         }
 
         // 2. Grid Reveal - T+500ms
@@ -226,6 +153,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             // document.body.classList.remove('no-scroll');
         }, 3000);
+
+        if (shouldAutoplayHeroVideo()) {
+            setTimeout(() => {
+                startHeroVideo();
+            }, 150);
+        }
     }
 
     function revealHeroElements() {
@@ -243,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             ticking = true;
         }
-    });
+    }, { passive: true });
 
     function handleScroll() {
         const scrollY = window.scrollY;
@@ -271,7 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
         heroOpacity = Math.max(0, Math.min(1, heroOpacity));
 
         // Apply to Hero Layers container if possible, or individual elements
-        const heroLayers = document.getElementById('hero-layers');
         if (heroLayers) {
             heroLayers.style.opacity = heroOpacity;
             // Optimization: Hide if fully invisible to save GPU
@@ -548,10 +480,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (prevBtn && nextBtn && carouselContainer) {
         prevBtn.addEventListener('click', () => {
-            carouselContainer.scrollBy({ left: -400, behavior: 'smooth' });
+            carouselContainer.scrollBy({ left: -400, behavior: scrollBehavior });
         });
         nextBtn.addEventListener('click', () => {
-            carouselContainer.scrollBy({ left: 400, behavior: 'smooth' });
+            carouselContainer.scrollBy({ left: 400, behavior: scrollBehavior });
         });
     }
 
@@ -649,9 +581,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const routeMap = {
         '/': 'hero-layers',
         '/#about': 'about-layer',
+        '/#about-layer': 'about-layer',
         '/#music': 'music-layer',
+        '/#music-layer': 'music-layer',
         '/#video': 'video-content-layer',
-        '/#contact': 'contact-layer'
+        '/#video-content-layer': 'video-content-layer',
+        '/#contact': 'contact-layer',
+        '/#contact-layer': 'contact-layer'
     };
 
     function handleNavigation(path, push = false) {
@@ -665,9 +601,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // No pushState needed for hash navigation, browser handles it or we just scroll
             
             if (targetId === 'hero-layers') {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.scrollTo({ top: 0, behavior: scrollBehavior });
                 // Clean URL hash if going to home
-                if (push && history.pushState) history.pushState(null, null, ' '); 
+                if (push && history.pushState) history.pushState(null, null, '/'); 
             } else {
                 // Header offset logic
                 const headerOffset = 80;
@@ -676,7 +612,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 window.scrollTo({
                     top: offsetPosition,
-                    behavior: 'smooth'
+                    behavior: scrollBehavior
                 });
             }
         }
@@ -692,9 +628,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.preventDefault();
                 handleNavigation(href, true);
                 // Manually set hash if needed for bookmarking, but avoid reload
-                if (href !== '/') {
-                    history.replaceState(null, null, href);
-                }
+                history.replaceState(null, null, href === '/' ? '/' : href);
             }
         });
     });
@@ -729,21 +663,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (targetRoute && routeMap[targetRoute]) {
-        // Wait for preloader sequence to finish
-        // We poll for mainContent visibility
-        const checkReady = setInterval(() => {
-            if (mainContent && getComputedStyle(mainContent).opacity === '1') {
-                clearInterval(checkReady);
-                setTimeout(() => {
-                    handleNavigation(targetRoute, false);
-                }, 100);
-            }
-        }, 200);
-
-        // Safety timeout (6s) to ensure navigation happens even if preloader gets stuck
-        setTimeout(() => {
-            clearInterval(checkReady);
-            handleNavigation(targetRoute, false);
-        }, 6000);
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                handleNavigation(targetRoute, false);
+            });
+        });
     }
 });
