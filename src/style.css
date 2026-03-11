@@ -190,9 +190,8 @@ svg.main-logo-svg image {
 
 /* Main Content */
 #main-content {
-    display: none;
-    opacity: 0;
-    transition: opacity 1s ease-in;
+    display: block;
+    opacity: 1;
     width: 100%;
 }
 

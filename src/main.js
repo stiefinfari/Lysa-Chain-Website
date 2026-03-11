@@ -56,8 +56,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const keywords = ['EPIC', 'CRAZY', 'UNIQUE'];
     let gridItems = []; 
     
-    // Initialize Grid
-    if (gridLayer) initGrid();
+    // Initialize Grid (Optimized LCP)
+    if (gridLayer) {
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(() => initGrid());
+        } else {
+            setTimeout(() => initGrid(), 0);
+        }
+    }
 
     // Handle Resize
     let resizeTimeout;
@@ -70,7 +76,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
-            if (gridLayer) initGrid();
+            if (gridLayer) {
+                if ('requestIdleCallback' in window) {
+                    requestIdleCallback(() => initGrid());
+                } else {
+                    setTimeout(() => initGrid(), 0);
+                }
+            }
         }, 200);
     });
 
@@ -123,7 +135,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 2. Dismiss Preloader & Start Reveal Timer
-    if (preloader) {
+    const isBot = /bot|googlebot|crawler|spider|robot|crawling/i.test(navigator.userAgent);
+    
+    if (isBot) {
+        // Instant reveal for bots
+        if (preloader) preloader.style.display = 'none';
+        if (mainContent) {
+            mainContent.style.display = 'block';
+            mainContent.style.opacity = '1';
+        }
+        // Ensure hero sequence elements are visible
+        if (gridLayer) gridLayer.style.opacity = '0.8';
+        if (mainMenu) mainMenu.classList.add('visible');
+    } else if (preloader) {
         const totalDuration = 5000; // Increased to allow full logo animation
         setTimeout(() => {
             preloader.style.opacity = '0';
@@ -149,13 +173,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 800); // Increased to match CSS transition
         }, totalDuration);
     } else {
-        if (mainContent) {
-            mainContent.style.display = 'block';
-            // Fallback for no preloader
-            setTimeout(() => {
-                startHeroSequence();
-            }, 100);
-        }
+        // Fallback for no preloader
+        setTimeout(() => {
+            startHeroSequence();
+        }, 100);
     }
 
     function startHeroSequence() {
@@ -627,27 +648,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- ROUTING LOGIC ---
     const routeMap = {
         '/': 'hero-layers',
-        '/about': 'about-layer',
-        '/music': 'music-layer',
-        '/video': 'video-content-layer',
-        '/contact': 'contact-layer'
+        '/#about': 'about-layer',
+        '/#music': 'music-layer',
+        '/#video': 'video-content-layer',
+        '/#contact': 'contact-layer'
     };
 
-    function handleNavigation(path, push = true) {
+    function handleNavigation(path, push = false) {
         // Strip trailing slash if present (except root)
-        const cleanPath = path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path;
-        const targetId = routeMap[cleanPath];
+        const targetId = routeMap[path] || routeMap['/' + path]; // Handle both #about and /#about
         
         if (!targetId) return;
 
         const targetEl = document.getElementById(targetId);
         if (targetEl) {
-            if (push) {
-                history.pushState({}, '', path);
-            }
-
+            // No pushState needed for hash navigation, browser handles it or we just scroll
+            
             if (targetId === 'hero-layers') {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
+                // Clean URL hash if going to home
+                if (push && history.pushState) history.pushState(null, null, ' '); 
             } else {
                 // Header offset logic
                 const headerOffset = 80;
@@ -668,30 +688,54 @@ document.addEventListener('DOMContentLoaded', () => {
         link.addEventListener('click', (e) => {
             const href = link.getAttribute('href');
             // Check if it's an internal route
-            if (href && href.startsWith('/') && routeMap[href]) {
+            if (href && (routeMap[href] || href === '/')) {
                 e.preventDefault();
-                handleNavigation(href);
+                handleNavigation(href, true);
+                // Manually set hash if needed for bookmarking, but avoid reload
+                if (href !== '/') {
+                    history.replaceState(null, null, href);
+                }
             }
         });
     });
 
-    // Handle Browser Back/Forward
-    window.addEventListener('popstate', () => {
-        handleNavigation(window.location.pathname, false);
+    // Handle Browser Back/Forward - Hash change
+    window.addEventListener('hashchange', () => {
+        const hash = window.location.hash;
+        if (hash) {
+             handleNavigation('/' + hash, false);
+        } else {
+             handleNavigation('/', false);
+        }
     });
 
     // Handle Initial Load (Direct Access)
+    // Check both hash and pathname for legacy support
+    const initialHash = window.location.hash;
     const initialPath = window.location.pathname;
-    const cleanInitialPath = initialPath.length > 1 && initialPath.endsWith('/') ? initialPath.slice(0, -1) : initialPath;
     
-    if (cleanInitialPath !== '/' && routeMap[cleanInitialPath]) {
+    let targetRoute = null;
+    if (initialHash) {
+        targetRoute = '/' + initialHash;
+    } else if (initialPath !== '/' && initialPath !== '/index.html') {
+        // Map legacy paths to hash paths
+        const legacyMap = {
+            '/about': '/#about',
+            '/music': '/#music',
+            '/video': '/#video',
+            '/contact': '/#contact'
+        };
+        targetRoute = legacyMap[initialPath.replace(/\/$/, '')];
+    }
+
+    if (targetRoute && routeMap[targetRoute]) {
         // Wait for preloader sequence to finish
         // We poll for mainContent visibility
         const checkReady = setInterval(() => {
             if (mainContent && getComputedStyle(mainContent).opacity === '1') {
                 clearInterval(checkReady);
                 setTimeout(() => {
-                    handleNavigation(cleanInitialPath, false);
+                    handleNavigation(targetRoute, false);
                 }, 100);
             }
         }, 200);
@@ -699,7 +743,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Safety timeout (6s) to ensure navigation happens even if preloader gets stuck
         setTimeout(() => {
             clearInterval(checkReady);
-            handleNavigation(cleanInitialPath, false);
+            handleNavigation(targetRoute, false);
         }, 6000);
     }
 });
